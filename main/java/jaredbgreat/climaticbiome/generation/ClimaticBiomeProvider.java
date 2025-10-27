@@ -137,12 +137,12 @@ public class ClimaticBiomeProvider extends BiomeProvider {
         int cr = radius >> 2;
         if(cr > 0) {
             int i1 = x - cr;
-            int j1 = x - cr;
+            int j1 = z - cr;
             int i2 = x + cr + 1;
-            int j2 = x + cr + 1;
-	        for(int i = i1; i < i2; i++)
-	                for(int j = j1; j < j2; j++) {
-	                        if(!allowed.contains(finder.getBiomeChunk(x + i, z + j))) {
+            int j2 = z + cr + 1;
+                for(int i = i1; i < i2; i++)
+                        for(int j = j1; j < j2; j++) {
+                                if(!allowed.contains(finder.getBiomeChunk(i, j))) {
 	                                return false;
 	                        }
 	                }
@@ -157,12 +157,12 @@ public class ClimaticBiomeProvider extends BiomeProvider {
         int cr = radius >> 2;
         if(cr > 0) {
             int i1 = x - cr;
-            int j1 = x - cr;
+            int j1 = z - cr;
             int i2 = x + cr + 1;
-            int j2 = x + cr + 1;
-	        for(int i = i1; i < i2; i++)
-	                for(int j = j1; j < j2; j++) {
-	                        if(!BiomeDictionary.hasType(finder.getBiomeChunk(x + i, z + j), allowed)) {
+            int j2 = z + cr + 1;
+                for(int i = i1; i < i2; i++)
+                        for(int j = j1; j < j2; j++) {
+                                if(!BiomeDictionary.hasType(finder.getBiomeChunk(i, j), allowed)) {
 	                                return false;
 	                        }
 	                }
