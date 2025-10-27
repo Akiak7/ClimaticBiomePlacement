@@ -14,7 +14,7 @@ public class ModMath {
 	 * @return the positive modulus
 	 */
     public static int modRight(int a, int b) {
-    	return (a & 0x7fffffff) % b;
+        return Math.floorMod(a, b);
     }
     
     
