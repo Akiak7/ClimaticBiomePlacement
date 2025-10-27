@@ -24,8 +24,19 @@ public class ModMathTest {
     }
 
     private static void validateModulusAgainstFloorMod() {
-        for (int divisor : Arrays.asList(3, 16, 127, 768, 1024, 4096)) {
+        int[] edgeDividends = {
+                Integer.MIN_VALUE, Integer.MIN_VALUE + 1,
+                Integer.MAX_VALUE - 1, Integer.MAX_VALUE
+        };
+        for (int divisor : Arrays.asList(3, 16, 127, 768, 1024, 4096,
+                Integer.MAX_VALUE - 1, Integer.MAX_VALUE)) {
             for (int dividend : TEST_COORDS) {
+                int expected = Math.floorMod(dividend, divisor);
+                int actual = ModMath.modRight(dividend, divisor);
+                assert actual == expected :
+                        String.format("modRight(%d, %d) produced %d; expected %d", dividend, divisor, actual, expected);
+            }
+            for (int dividend : edgeDividends) {
                 int expected = Math.floorMod(dividend, divisor);
                 int actual = ModMath.modRight(dividend, divisor);
                 assert actual == expected :
