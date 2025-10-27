@@ -289,10 +289,11 @@ public class MapRegistry extends AbstractMapRegistry implements IMapRegistry {
 	 * @see jaredbgreat.climaticbiome.generation.map.IMapRegistry#getChunkBiomeGrid(int, int, net.minecraft.world.biome.Biome[])
 	 */
     @Override
-	public Biome[] getChunkBiomeGrid(int x, int z, Biome[] in) {
-    	int[] tiles = new int[9];
-    	//System.out.println("[" + x + ", " + z + "]");
-    	BiomeBasin[][] basins = new BiomeBasin[3][3];
+        public Biome[] getChunkBiomeGrid(int x, int z, Biome[] in) {
+        BasinBufferPool buffers = BasinBufferPool.local();
+        int[] tiles = buffers.acquireChunkTiles();
+        //System.out.println("[" + x + ", " + z + "]");
+        BiomeBasin[][] basins = buffers.acquireChunkBasins();
     	for(int i = 0; i < tiles.length; i++) {
     		int x1 = (i / 3);
     		int z1 = (i % 3);   
@@ -329,13 +330,14 @@ public class MapRegistry extends AbstractMapRegistry implements IMapRegistry {
 	 * @return
 	 */
     private Biome[] getBiomeGrid(int x, int z, int h, int w) {
-    	int ch = ((h - 1) / 16) + 3;
-    	int cw = ((w - 1) / 16) + 3;
-    	int numc = ch * cw;
-    	Biome[] out = new Biome[h * w];
-    	
-    	int[] tiles = new int[numc];
-    	BiomeBasin[][] basins = new BiomeBasin[ch][cw];
+        int ch = ((h - 1) / 16) + 3;
+        int cw = ((w - 1) / 16) + 3;
+        int numc = ch * cw;
+        Biome[] out = new Biome[h * w];
+
+        BasinBufferPool buffers = BasinBufferPool.local();
+        int[] tiles = buffers.acquireIntArray(numc);
+        BiomeBasin[][] basins = buffers.acquireBasinGrid(ch, cw);
     	for(int i = 0; i < tiles.length; i++) {
     		int x1 = (i / cw);
     		int z1 = (i % cw); 
@@ -404,9 +406,10 @@ public class MapRegistry extends AbstractMapRegistry implements IMapRegistry {
 	 * @see jaredbgreat.climaticbiome.generation.map.IMapRegistry#getChunkBiomeGen(int, int, net.minecraft.world.biome.Biome[])
 	 */
     @Override
-	public Biome[] getChunkBiomeGen(int x, int z, Biome[] in) {
-    	int[] tiles = new int[9];
-    	BiomeBasin[][] basins = new BiomeBasin[3][3];
+        public Biome[] getChunkBiomeGen(int x, int z, Biome[] in) {
+        BasinBufferPool buffers = BasinBufferPool.local();
+        int[] tiles = buffers.acquireChunkGenTiles();
+        BiomeBasin[][] basins = buffers.acquireChunkGenBasins();
     	for(int i = 0; i < tiles.length; i++) {
     		int x1 = (i / 3);
     		int z1 = (i % 3);   
@@ -442,13 +445,14 @@ public class MapRegistry extends AbstractMapRegistry implements IMapRegistry {
 	 * @return
 	 */
     private Biome[] getBiomeGenGrid(int x, int z, int h, int w) {
-    	int ch = ((h - 1) / 16) + 3;
-    	int cw = ((w - 1) / 16) + 3;
-    	int numc = ch * cw;
-    	Biome[] out = new Biome[h * w];
-    	
-    	int[] tiles = new int[numc];
-    	BiomeBasin[][] basins = new BiomeBasin[ch][cw];
+        int ch = ((h - 1) / 16) + 3;
+        int cw = ((w - 1) / 16) + 3;
+        int numc = ch * cw;
+        Biome[] out = new Biome[h * w];
+
+        BasinBufferPool buffers = BasinBufferPool.local();
+        int[] tiles = buffers.acquireIntArray(numc);
+        BiomeBasin[][] basins = buffers.acquireBasinGenGrid(ch, cw);
     	for(int i = 0; i < tiles.length; i++) {
     		int x1 = (i / cw);
     		int z1 = (i % cw); 
