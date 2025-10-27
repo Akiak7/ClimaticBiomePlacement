@@ -272,9 +272,11 @@ public class MapRegistry extends AbstractMapRegistry implements IMapRegistry {
 	 */
 	@Override
 	public Biome getBiomeChunk(int x, int z) {
-		return getFullBiome(getMapFromChunkCoord(x, z)
-				.getBiome(modRight(x + cOffset, cWidth), 
-						  modRight(z + cOffset, cWidth) & 0xff));
+        return getFullBiome(getMapFromChunkCoord(x, z)
+                        .getBiome(modRight(x + cOffset, cWidth),
+                                        // Keep the full coordinate so large regions remain intact;
+                                        // RegionMap (or JEIDRegionMap) handles any biome ID bounds.
+                                        modRight(z + cOffset, cWidth)));
 	}
     
 	
