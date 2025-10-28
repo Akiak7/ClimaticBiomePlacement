@@ -34,12 +34,12 @@ public class GetRiver implements IBiomeSpecifier {
 				return hot;
 			}
 				
-		} else {
-			if((tile.getTemp() + (tile.getBiomeSeed() & 0x1)) < 5) {
-				PseudoBiomes.deepFrozenRiver.getSubId();
-			}
-			return PseudoBiomes.deepRiver.getSubId();
-		}
+                } else {
+                        if((tile.getTemp() + (tile.getBiomeSeed() & 0x1)) < 5) {
+                                return PseudoBiomes.deepFrozenRiver.getSubId();
+                        }
+                        return PseudoBiomes.deepRiver.getSubId();
+                }
 	}
 	
 	
