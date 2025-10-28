@@ -1,6 +1,8 @@
 package jaredbgreat.climaticbiome.generation;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Nullable;
@@ -21,6 +23,14 @@ public class ClimaticBiomeProvider extends BiomeProvider {
         private IMapRegistry finder;
         private boolean vanillaCacheValid;
         private boolean altChunks;
+        private final Map<Long, Biome[]> chunkCache = new LinkedHashMap<Long, Biome[]>(16, 0.75f, true) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<Long, Biome[]> eldest) {
+                        return size() > 64;
+                }
+        };
         
         
         public ClimaticBiomeProvider(World world, boolean altChunks) {             
@@ -71,10 +81,16 @@ public class ClimaticBiomeProvider extends BiomeProvider {
         if(biomes == null || biomes.length < width * height) {
             biomes = new Biome[width * height];
         }
-        for(int i = 0; i < width; i++) 
-                for(int j = 0; j < height; j++) {
-                        biomes[(j * width) + i] = findBiomeAt((x + i) * 4, (z + j) * 4);
+        for(int dz = 0; dz < height; dz++) {
+                for(int dx = 0; dx < width; dx++) {
+                        int blockX = (x + dx) * 4;
+                        int blockZ = (z + dz) * 4;
+                        int chunkX = blockX >> 4;
+                        int chunkZ = blockZ >> 4;
+                        Biome[] chunk = getChunkBiomes(chunkX, chunkZ);
+                        biomes[(dz * width) + dx] = chunk[(chunkModulus(blockZ) * 16) + chunkModulus(blockX)];
                 }
+        }
         return biomes;
     }
 
@@ -93,8 +109,7 @@ public class ClimaticBiomeProvider extends BiomeProvider {
     
     
     private Biome findBiomeAt(int x, int z) {
-        Biome[] chunk = new Biome[256];
-        finder.getChunkBiomeGen(x / 16, z / 16, chunk);
+        Biome[] chunk = getChunkBiomes(x >> 4, z >> 4);
         return chunk[(chunkModulus(z) * 16) + chunkModulus(x)];
     }
     
@@ -127,6 +142,21 @@ public class ClimaticBiomeProvider extends BiomeProvider {
     
     private int chunkModulus(int in) {
         return in & 0xf;
+    }
+
+    private Biome[] getChunkBiomes(int chunkX, int chunkZ) {
+        long key = chunkKey(chunkX, chunkZ);
+        Biome[] chunk = chunkCache.get(key);
+        if(chunk == null) {
+                chunk = new Biome[256];
+                finder.getChunkBiomeGen(chunkX, chunkZ, chunk);
+                chunkCache.put(key, chunk);
+        }
+        return chunk;
+    }
+
+    private long chunkKey(int chunkX, int chunkZ) {
+        return ((long)chunkX << 32) | (chunkZ & 0xffffffffL);
     }
 
     
