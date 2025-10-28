@@ -368,8 +368,8 @@ public class MapRegistry extends AbstractMapRegistry implements IMapRegistry {
     	int wOff = modRight(z, 16);
     	int h1 = h + hOff;
     	int w1 = w + wOff;
-    	int h2 = h1 + (16 - h1 % 16);
-    	int w2 = w1 + (16 - w1 % 16);
+        int h2 = h1 + ((16 - (h1 % 16)) % 16);
+        int w2 = w1 + ((16 - (w1 % 16)) % 16);
     	Biome[] tmp = getBiomeGrid(x / 16, z /  16, h2, w2);
     	for(int i = 0; i < h; i++) 
     		for(int j = 0; j < w; j++) {
