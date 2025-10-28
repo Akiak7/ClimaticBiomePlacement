@@ -3,7 +3,6 @@ package jaredbgreat.climaticbiome.biomes;
 import java.util.logging.Logger;
 
 import jaredbgreat.climaticbiome.configuration.ConfigHandler;
-import jaredbgreat.climaticbiome.generation.cache.ICachable;
 
 public class SubBiomeRegistry {
 	private static SubBiomeRegistry subreg;
@@ -151,14 +150,15 @@ public class SubBiomeRegistry {
      */
     private void grow() {
         SubBiome[] old = data;
-        SubBiome[] data = new SubBiome[(old.length * 3) / 2];
+        SubBiome[] newData = new SubBiome[(old.length * 3) / 2];
+        this.data = newData;
         for(int i = 0; i < old.length; i++) {
             if(old[i] != null) {
                 rebucket(old[i]);
             }
         }
-        capacity = (data.length * 3) / 4;
-        lowLimit = ((data.length - minSize) * 3) / 16;
+        capacity = (this.data.length * 3) / 4;
+        lowLimit = ((this.data.length - minSize) * 3) / 16;
     }
     
     
@@ -167,14 +167,15 @@ public class SubBiomeRegistry {
      */
     private void shrink() {
         SubBiome[] old = data;
-        SubBiome[] data = new SubBiome[old.length / 2];
+        SubBiome[] newData = new SubBiome[old.length / 2];
+        this.data = newData;
         for(int i = 0; i < old.length; i++) {
             if(old[i] != null) {
                 rebucket(old[i]);
             }
         }
-        capacity = (data.length * 3) / 4;
-        lowLimit = ((data.length - minSize) * 3) / 16;
+        capacity = (this.data.length * 3) / 4;
+        lowLimit = ((this.data.length - minSize) * 3) / 16;
     }
     
     
