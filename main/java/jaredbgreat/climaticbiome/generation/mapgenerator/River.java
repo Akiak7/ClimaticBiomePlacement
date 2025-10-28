@@ -28,7 +28,7 @@ public class River {
         id = riverId;
         scale = sc;
         x = high.x * sc.whole - map.getXoff();
-        z = high.z * sc.whole - map.getXoff();
+        z = high.z * sc.whole - map.getZoff();
         dstx = endX;
         dstz = endZ;
         MAX = (MapMaker.RSIZE * sc.whole) - 2;
