@@ -316,11 +316,12 @@ public class MapMaker {
     public double averageNoise(double[][] noise, int x, int y) {
         double sum = 0;
         // Yes, I include the cell itself -- its simpler and works for me
-        for(int i = x - 2; i <= x + 2; i++) 
+        // Average across the full 5x5 neighborhood centered on the cell
+        for(int i = x - 2; i <= x + 2; i++)
             for(int j = y - 2; j <= y + 2; j++) {
                 sum += noise[i][j];
             }
-        return sum / 9;
+        return sum / 25;
     }
     
     
