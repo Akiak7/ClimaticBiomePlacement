@@ -1,6 +1,10 @@
 package jaredbgreat.climaticbiome;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.logging.Logger;
 
 import jaredbgreat.climaticbiome.biomes.ModBiomes;
@@ -94,34 +98,71 @@ public class ClimaticBiomes {
     	DefReader.init(ForgeRegistries.BIOMES, confdir);
     	VariantParser.parse(confdir);
     	ItemRegistrar.oreDict();
-    	try {
-	    	if(ConfigHandler.moreMansion) {
-		    	for(Biome biome : ForgeRegistries.BIOMES.getValues()) {
-		    		if(BiomeDictionary.hasType(biome, Type.FOREST) 
-		    				&& !WoodlandMansion.ALLOWED_BIOMES.contains(biome)) {
-		    		}
-		    	}
-	    	}
-    	} catch(UnsupportedOperationException e) {
-    		Logger log = Logger.getLogger("Minecraft");
-    		log.warning("[Climatic Biomes] Woodland Mansion genaraion cannot be modified!");
-    		log.warning("[Climatic Biomes] You might need a different version of Forge or Java (probably Java)");
-    	}
+        try {
+                if(ConfigHandler.moreMansion) {
+                        Collection<Biome> mansionBiomes = WoodlandMansion.ALLOWED_BIOMES;
+                        if(canModifyMansionBiomes(mansionBiomes)) {
+                                for(Biome biome : ForgeRegistries.BIOMES.getValues()) {
+                                        if(BiomeDictionary.hasType(biome, Type.FOREST)
+                                                        && !mansionBiomes.contains(biome)) {
+                                                mansionBiomes.add(biome);
+                                        }
+                                }
+                        } else {
+                                Logger log = Logger.getLogger("Minecraft");
+                                log.warning("[Climatic Biomes] Woodland Mansion biome list is immutable; skipping additions.");
+                        }
+                }
+        } catch(UnsupportedOperationException e) {
+                Logger log = Logger.getLogger("Minecraft");
+                log.warning("[Climatic Biomes] Woodland Mansion genaraion cannot be modified!");
+                log.warning("[Climatic Biomes] You might need a different version of Forge or Java (probably Java)");
+        }
     }
-    
-    
+
+
     private void makeFiles() {
-    	Externalizer extern = new Externalizer();
-    	extern.copyOut(confdir);    	
+        Externalizer extern = new Externalizer();
+        extern.copyOut(confdir);
     }
-    
-    
+
+
     private void moveWorldTypes() {
-    	if(ConfigHandler.makeRealisticDefault) {
-    		WorldType.WORLD_TYPES[0] = realisticWorldType;
-    	} else {
-    		WorldType.WORLD_TYPES[0] = climaticWorldType;
-    	}
+        if(ConfigHandler.makeRealisticDefault) {
+                WorldType.WORLD_TYPES[0] = realisticWorldType;
+        } else {
+                WorldType.WORLD_TYPES[0] = climaticWorldType;
+        }
+    }
+
+
+    private boolean canModifyMansionBiomes(Collection<Biome> mansionBiomes) {
+        if(mansionBiomes == null) {
+                return false;
+        }
+        Collection<Biome> probe = new ArrayList<>();
+        if(Collections.unmodifiableCollection(probe).getClass().isInstance(mansionBiomes)) {
+                return false;
+        }
+        if(Collections.unmodifiableList(new ArrayList<Biome>()).getClass().isInstance(mansionBiomes)) {
+                return false;
+        }
+        if(Collections.unmodifiableSet(new HashSet<Biome>()).getClass().isInstance(mansionBiomes)) {
+                return false;
+        }
+        try {
+                Class<?> immutableSetClass = Class.forName("com.google.common.collect.ImmutableSet");
+                if(immutableSetClass.isInstance(mansionBiomes)) {
+                        return false;
+                }
+                Class<?> immutableListClass = Class.forName("com.google.common.collect.ImmutableList");
+                if(immutableListClass.isInstance(mansionBiomes)) {
+                        return false;
+                }
+        } catch (ClassNotFoundException e) {
+                // Ignore, Guava may not be present and the collection might still be mutable.
+        }
+        return true;
     }
     
 
