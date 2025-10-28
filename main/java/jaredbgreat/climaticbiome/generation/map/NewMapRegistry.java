@@ -103,7 +103,7 @@ public class NewMapRegistry extends AbstractMapRegistry implements IMapRegistry 
 	
 	
 	public int blockToMap(int c) {
-		return (c + bOffset) / cWidth;
+		return (c + bOffset) / bWidth;
 	}
 	
 	/**
