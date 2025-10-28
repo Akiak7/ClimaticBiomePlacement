@@ -1,9 +1,8 @@
 package jaredbgreat.climaticbiome.generation.map;
 
-import jaredbgreat.climaticbiome.configuration.ConfigHandler;
 import jaredbgreat.climaticbiome.generation.cache.AbstractCachable;
-import jaredbgreat.climaticbiome.generation.mapgenerator.MapMaker;
-import jaredbgreat.climaticbiome.generation.mapgenerator.TerrainType;
+import jaredbgreat.climaticbiome.generation.cache.Coords;
+import jaredbgreat.climaticbiome.util.Logging;
 
 public class RegionMap extends AbstractCachable implements IRegionMap  {
     
@@ -14,8 +13,23 @@ public class RegionMap extends AbstractCachable implements IRegionMap  {
     final int[] data;
     
     final int[] shit;
-    
-    static int n = 0;
+
+    private static final boolean LIFETIME_LOGGING
+            = Boolean.getBoolean("climaticbiome.regionmap.lifetimeLogging");
+
+    private static void logLifetimeEvent(String message) {
+        if(LIFETIME_LOGGING) {
+            Logging.logInfo("[RegionMap] " + message);
+        }
+    }
+
+    private void logCreation() {
+        logLifetimeEvent("Created map at " + getCoords());
+    }
+
+    public static void logEviction(Coords coords) {
+        logLifetimeEvent("Evicted map at " + coords);
+    }
     
     public RegionMap(int x, int z, int width) {
         super(x, z);
@@ -24,17 +38,9 @@ public class RegionMap extends AbstractCachable implements IRegionMap  {
         dataSize = width * width;
         data = new int[dataSize];
         shit = new int[dataSize];
-        n++;
+        logCreation();
     }
-    
-    
-    @Override
-	public void finalize() throws Throwable {
-    	n--;
-    	super.finalize();
-    }
-    
-    
+
     /**
      * Returns in game biome id.
      * 

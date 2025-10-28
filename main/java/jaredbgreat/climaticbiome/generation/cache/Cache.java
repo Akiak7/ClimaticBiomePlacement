@@ -1,6 +1,6 @@
 package jaredbgreat.climaticbiome.generation.cache;
 
-
+import jaredbgreat.climaticbiome.generation.map.RegionMap;
 
 /**
  * A cache system using a homebrewed hash map.  The reason for not using 
@@ -274,7 +274,9 @@ public class Cache <T extends ICachable> {
     	int startSize = data.length;
         for(int i = 0; i < data.length; i++) {
             if((data[i] != null) && (data[i].isOldData())) {
-            	//System.out.println("**Removing item from cache**");
+                if(data[i] instanceof RegionMap) {
+                    RegionMap.logEviction(data[i].getCoords());
+                }
                 data[i] = null;
                 length--;
             }
