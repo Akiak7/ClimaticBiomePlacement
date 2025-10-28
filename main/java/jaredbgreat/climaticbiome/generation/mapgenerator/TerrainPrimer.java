@@ -18,7 +18,8 @@ public class TerrainPrimer {
 		int[] out = new int[tiles.length];
 		double[][] scaleNoise  = noise.process(1001);
 		double[][] heightNoise = noise.process(8675);
-		double[][] scratch = new double[tiles.length][2];
+                double[] scratchHeight = new double[tiles.length];
+                double[] scratchScale = new double[tiles.length];
 		int D = RSIZE * scale.whole;
 		for(int i = 0; i < tiles.length; i++) {
 			int x = i / D;
@@ -34,18 +35,18 @@ public class TerrainPrimer {
 			int x = i / D;
 			int z = i % D;
 			int max = scale.width - 2;
-			if((tiles[i].shouldSmooth())) {
-				smooth(tiles, x, z, scale, scratch);
-			} else {
-				scratch[i][0] = tiles[i].height;
-				scratch[i][1] = tiles[i].scale;				
-			}
-		}
-		for(int i = 0; i < tiles.length; i++) {
-			int x = i / D;
-			int z = i % D;
-			tiles[i].height = scratch[i][0];
-			tiles[i].scale = (float) scratch[i][1];
+                        if((tiles[i].shouldSmooth())) {
+                                smooth(tiles, x, z, scale, scratchHeight, scratchScale);
+                        } else {
+                                scratchHeight[i] = tiles[i].height;
+                                scratchScale[i] = tiles[i].scale;
+                        }
+                }
+                for(int i = 0; i < tiles.length; i++) {
+                        int x = i / D;
+                        int z = i % D;
+                        tiles[i].height = scratchHeight[i];
+                        tiles[i].scale = (float) scratchScale[i];
 			if(tiles[i].height > 3) tiles[i].height = 4 - (1 / (tiles[i].height - 2));
 			datamap.setTerrainExpress(Math.max(Math.min((int)((averageHeight(tiles, x, z, scale.whole) 
 							 * 32d) + 128d), 255), 0) +
@@ -55,15 +56,16 @@ public class TerrainPrimer {
 	}
 	
 	
-	private void smooth(ChunkTile[] tiles, int x, int z, SizeScale size, double[][] scratch) {
-		int loc = x + (z * size.width);
-		double bh = 0, bs = 0, ch = 0, cs = 0;
-		Biome biome = Biome.getBiome(tiles[loc].rlBiome, Biomes.DEFAULT);
-		if(BiomeDictionary.hasType(biome, BiomeDictionary.Type.RIVER)) {
-			scratch[loc][0] = tiles[loc].height;
-			scratch[loc][1] = tiles[loc].scale;	
-			return;
-		}
+        private void smooth(ChunkTile[] tiles, int x, int z, SizeScale size,
+                        double[] scratchHeight, double[] scratchScale) {
+                int loc = x + (z * size.width);
+                double bh = 0, bs = 0, ch = 0, cs = 0;
+                Biome biome = Biome.getBiome(tiles[loc].rlBiome, Biomes.DEFAULT);
+                if(BiomeDictionary.hasType(biome, BiomeDictionary.Type.RIVER)) {
+                        scratchHeight[loc] = tiles[loc].height;
+                        scratchScale[loc] = tiles[loc].scale;
+                        return;
+                }
 		int i2, j2, index, max;
 		max = size.width - 1;
 		for(int i = -2; i < 3; i++)
@@ -88,18 +90,18 @@ public class TerrainPrimer {
 		ch /=25;
 		cs /= 25;
 		//Apply
-		if(BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN)) {
-			scratch[loc][0] = Math.min(((tiles[loc].height + bh + ch) / 3), Math.max(-0.2, biome.getBaseHeight()));
-			scratch[loc][1] = ((tiles[loc].scale + bs + cs) / 3);
-		} else if(biome == ModBiomes.activeVolcano) {
-			scratch[loc][0] = Math.max(tiles[loc].height,Math.max(((tiles[loc].height + bh + ch) / 3), 
-					Math.min(0, biome.getBaseHeight())));
-			scratch[loc][1] = ((tiles[loc].scale + bs + cs) / 3);
-		} else {
-			scratch[loc][0] = ch;
-			scratch[loc][1] = cs;
-		}
-	}
+                if(BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN)) {
+                        scratchHeight[loc] = Math.min(((tiles[loc].height + bh + ch) / 3), Math.max(-0.2, biome.getBaseHeight()));
+                        scratchScale[loc] = ((tiles[loc].scale + bs + cs) / 3);
+                } else if(biome == ModBiomes.activeVolcano) {
+                        scratchHeight[loc] = Math.max(tiles[loc].height,Math.max(((tiles[loc].height + bh + ch) / 3),
+                                        Math.min(0, biome.getBaseHeight())));
+                        scratchScale[loc] = ((tiles[loc].scale + bs + cs) / 3);
+                } else {
+                        scratchHeight[loc] = ch;
+                        scratchScale[loc] = cs;
+                }
+        }
 	
 	
 	private ChunkTile getTileFromCoords(ChunkTile[] tiles, int x, int z, int size) {
