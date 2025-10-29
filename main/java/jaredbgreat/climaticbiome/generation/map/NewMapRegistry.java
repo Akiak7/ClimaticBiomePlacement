@@ -11,6 +11,7 @@ import jaredbgreat.climaticbiome.generation.mapgenerator.TerrainPrimer;
 import jaredbgreat.climaticbiome.generation.mapgenerator.TerrainType;
 import jaredbgreat.climaticbiome.util.SpatialHash;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -131,16 +132,21 @@ public class NewMapRegistry extends AbstractMapRegistry implements IMapRegistry 
 		if(file != null && file.exists()) {
 			if(file.length() < (dataSize * 4)) {
 				convertMap(map, file);
-			} else try {				
-				FileInputStream fs = new FileInputStream(file);
-				for(int i = 0; i < dataSize; i++) {
-						data[i] = (short)fs.read();
-						data[i] |= (fs.read() << 8);
-						data[i] |= (fs.read() << 16);
-						data[i] |= (fs.read() << 24);
-						data[i] |= (fs.read() << 32);
-					}
-				fs.close();
+                        } else try {
+                                FileInputStream fs = new FileInputStream(file);
+                                for(int i = 0; i < dataSize; i++) {
+                                                long b0 = readUnsignedByte(fs);
+                                                long b1 = readUnsignedByte(fs);
+                                                long b2 = readUnsignedByte(fs);
+                                                long b3 = readUnsignedByte(fs);
+                                                long b4 = readUnsignedByte(fs);
+                                                data[i] = b0
+                                                        | (b1 << 8)
+                                                        | (b2 << 16)
+                                                        | (b3 << 24)
+                                                        | (b4 << 32);
+                                        }
+                                fs.close();
 				if(altChunks) {
 					readTerrainData(data, x, z);
 				}
@@ -177,19 +183,20 @@ public class NewMapRegistry extends AbstractMapRegistry implements IMapRegistry 
 	}
 	
 	
-	private void convertMap(NewRegionMap map, File file) {
-		Coords coords = map.getCoords();
-		int x = coords.getX();
-		int z = coords.getZ();
-		long[] data = map.getData();
+        private void convertMap(NewRegionMap map, File file) {
+                Coords coords = map.getCoords();
+                int x = coords.getX();
+                int z = coords.getZ();
+                long[] data = map.getData();
 		// Load old format map with modifications
 		try {				
-			FileInputStream fs = new FileInputStream(file);
-			for(int i = 0; i < dataSize; i++) {
-					data[i] = (short)fs.read();
-					data[i] |= (fs.read() << 32);
-				}
-			fs.close();
+                        FileInputStream fs = new FileInputStream(file);
+                        for(int i = 0; i < dataSize; i++) {
+                                        long lower = readUnsignedByte(fs);
+                                        long upper = readUnsignedByte(fs);
+                                        data[i] = lower | (upper << 32);
+                                }
+                        fs.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -211,8 +218,17 @@ public class NewMapRegistry extends AbstractMapRegistry implements IMapRegistry 
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
+                }
+        }
+
+
+        private static long readUnsignedByte(FileInputStream fs) throws IOException {
+                int value = fs.read();
+                if(value == -1) {
+                        throw new EOFException("Unexpected end of stream while reading map data");
+                }
+                return ((long)value) & 0xffL;
+        }
 	
 	
 	private void writeMap(NewRegionMap map) {
