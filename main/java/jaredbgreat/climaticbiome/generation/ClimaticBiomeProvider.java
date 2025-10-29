@@ -33,10 +33,11 @@ public class ClimaticBiomeProvider extends BiomeProvider {
         };
         
         
-        public ClimaticBiomeProvider(World world, boolean altChunks) {             
+        public ClimaticBiomeProvider(World world, boolean altChunks) {
                 super(/*world.getWorldInfo()*/);
                 vanillaCacheValid = true;
                 this.world = world;
+                this.altChunks = altChunks;
                 {
 	                if(net.minecraftforge.fml.common.Loader.isModLoaded("jeid")) {
 	                	finder = new NewMapRegistry(world.getSeed(), world, altChunks);
