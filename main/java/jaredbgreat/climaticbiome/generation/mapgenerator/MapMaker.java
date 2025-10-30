@@ -181,7 +181,8 @@ public class MapMaker {
         } else {
         	makeBiomes(premap, random.getRandomAt(coords.getX(), coords.getZ(), 3));
         }
-        int start = (RSIZE * scale.whole * 2) + 2;
+        int margin = settings.extraBeaches ? 3 : 2;
+        int start = (RSIZE * scale.whole * margin) + margin;
         int end = premap.length - start;
         for(int i = start; i < end; i++) {
         	thinBeach(premap[i]);
@@ -429,8 +430,8 @@ public class MapMaker {
         if(!t.beach) return;
         int oceans = 0;
         if(settings.extraBeaches) {
-	        for(int i = -2; i < 3; i++) 
-	            for(int j = -2; j < 3; j++) {
+                for(int i = -3; i <= 3; i++)
+                    for(int j = -3; j <= 3; j++) {
 	                ChunkTile x = premap[((t.getX() + i) * RSIZE * scale.whole) + t.getZ() + j];
 	                if(notLand(x)) {
 	                    oceans++;
