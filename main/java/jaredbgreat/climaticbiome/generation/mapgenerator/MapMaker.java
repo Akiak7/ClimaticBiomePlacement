@@ -429,23 +429,34 @@ public class MapMaker {
     void thinBeach(ChunkTile t) {
         if(!t.beach) return;
         int oceans = 0;
+        int width = RSIZE * scale.whole;
         if(settings.extraBeaches) {
                 for(int i = -3; i <= 3; i++)
                     for(int j = -3; j <= 3; j++) {
-	                ChunkTile x = premap[((t.getX() + i) * RSIZE * scale.whole) + t.getZ() + j];
-	                if(notLand(x)) {
-	                    oceans++;
-	                }
-	            }
+                        int nx = t.getX() + i;
+                        int nz = t.getZ() + j;
+                        if((nx < 0) || (nx >= width) || (nz < 0) || (nz >= width)) {
+                            continue;
+                        }
+                        ChunkTile x = premap[(nx * width) + nz];
+                        if(notLand(x)) {
+                            oceans++;
+                        }
+                    }
         } else {
-	        for(int i = -1; i < 2; i++) 
-	            for(int j = -1; j < 2; j++) {
-	                ChunkTile x = premap[((t.getX() + i) * RSIZE * scale.whole) + t.getZ() + j];
-	                if(notLand(x)) {
-	                    oceans++;
-	                }
-	            }
-	        }
+                for(int i = -1; i < 2; i++)
+                    for(int j = -1; j < 2; j++) {
+                        int nx = t.getX() + i;
+                        int nz = t.getZ() + j;
+                        if((nx < 0) || (nx >= width) || (nz < 0) || (nz >= width)) {
+                            continue;
+                        }
+                        ChunkTile x = premap[(nx * width) + nz];
+                        if(notLand(x)) {
+                            oceans++;
+                        }
+                    }
+                }
         if(oceans < 1) {
         	t.beach = false;
         	return;
