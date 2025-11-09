@@ -134,11 +134,11 @@ public class BiomeClimateTable implements IBiomeSpecifier {
 			return OCEAN.getBiome(tile);
 		}
         if(tile.getTemp() > 7 && ((tile.getWet() - tile.getVal() - tile.getHeight()) > 0)) {
-            if((tile.getBiomeSeed() & 0x1) == 1) {
-                tile.nextBiomeSeed();
+            boolean swampCandidate = (tile.getBiomeSeed() & 0x1) == 1;
+            tile.nextBiomeSeed();
+            if(swampCandidate && !tile.isBeach()) {
                 return SWAMP.getBiome(tile);
             }
-            tile.nextBiomeSeed();
         }
         if(tile.nextBiomeSeed().isMountain()) {
         	return ALPINE.getBiome(tile);
