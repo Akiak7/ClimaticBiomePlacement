@@ -429,18 +429,21 @@ public class MapMaker {
         if(!t.beach) return;
         int oceans = 0;
         if(settings.extraBeaches) {
-	        for(int i = -2; i < 3; i++) 
-	            for(int j = -2; j < 3; j++) {
-	                ChunkTile x = premap[((t.getX() + i) * RSIZE * scale.whole) + t.getZ() + j];
-	                if(notLand(x)) {
-	                    oceans++;
-	                }
-	            }
+                for(int i = -3; i < 4; i++)
+                    for(int j = -3; j < 4; j++) {
+                        int checkX = t.getX() + i;
+                        int checkZ = t.getZ() + j;
+                        if(tileIndexIsBad(checkX, checkZ)) continue;
+                        ChunkTile x = premap[(checkX * RSIZE * scale.whole) + checkZ];
+                        if(notLand(x)) {
+                            oceans++;
+                        }
+                    }
         } else {
-	        for(int i = -1; i < 2; i++) 
-	            for(int j = -1; j < 2; j++) {
-	                ChunkTile x = premap[((t.getX() + i) * RSIZE * scale.whole) + t.getZ() + j];
-	                if(notLand(x)) {
+                for(int i = -1; i < 2; i++)
+                    for(int j = -1; j < 2; j++) {
+                        ChunkTile x = premap[((t.getX() + i) * RSIZE * scale.whole) + t.getZ() + j];
+                        if(notLand(x)) {
 	                    oceans++;
 	                }
 	            }
