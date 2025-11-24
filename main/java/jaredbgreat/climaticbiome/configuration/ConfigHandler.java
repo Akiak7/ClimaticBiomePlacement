@@ -42,11 +42,13 @@ public class ConfigHandler {
 	public static boolean addToVanilla = false;
 	
 	public static boolean includeForests = true;
-	public static boolean includeMountains = true;
-	public static boolean includePlains = true;
-	public static boolean includeSwamps = true;
-	public static boolean includeRivers = true;
-	public static boolean includeVolcano = true;
+        public static boolean includeMountains = true;
+        public static boolean includePlains = true;
+        public static boolean includeSwamps = true;
+        public static boolean includeRivers = true;
+        public static boolean includeVolcano = true;
+
+        public static float swampBeachBlock = 1.0f;
 	
 	public static boolean biomeWater = false;
 	
@@ -312,11 +314,14 @@ public class ConfigHandler {
 						+ "and montane forests.");
 		includePlains   = config.getBoolean("PlainsVariants", "Biomes", true, 
 						"If true there will be temperature specific plains.");
-		includeSwamps   = config.getBoolean("SwampVariants", "Biomes", true, 
-						"If true there will be temperature specific wetlands.");
-		includeVolcano  = config.getBoolean("Volcanoes", "Biomes", true, 
-						"If this and MountainVariants are both true there will \n"
-						+ "be volcanoes.");
+                includeSwamps   = config.getBoolean("SwampVariants", "Biomes", true,
+                                                "If true there will be temperature specific wetlands.");
+                includeVolcano  = config.getBoolean("Volcanoes", "Biomes", true,
+                                                "If this and MountainVariants are both true there will \n"
+                                                + "be volcanoes.");
+
+                swampBeachBlock = config.getFloat("SwampBeachBlock", "Biomes", 1.0f, 0.0f, 1.0f,
+                                                "How much swamps should be blocked from overwriting beaches (0 to 1).");
 		
 		
 		config.save();	// Saving it all
