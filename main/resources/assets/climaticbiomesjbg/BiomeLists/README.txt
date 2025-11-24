@@ -1,89 +1,77 @@
-﻿TLDR:
+This folder contains subfolders for every biome mod that you may have installed. The 'Minecraft' folder is for vanilla biomes.
 
-This isn't really hard:
+Inside each folder, you will find config files for the different biome categories. Open each file, and add, edit, or remove entries as you please.
 
-biome(modid:name) 
-...will add that biome to a list
+To use the correct names for the biomes, please check the "BiomeList.txt" file in the root folder. This will list all the installed biomes.
 
-noisenoise(modid:name, n, modid:name)
-...will add the first biome if a noise function is less than n, the second otherwise. This is for things like mesas and plataeus; n is from 0 to 9.
+*****
 
-seed(modid:name, n, modid:name)
-...will has a 1 in n chance to add the first biome, otherwise it will add the second.  This is for rare biomes / variations.
+Supported syntax:
 
-temp(modid:name, n, modid:name)
-...will add the first biome if temperature is less than n, otherwise the second.  Temperature is from 0 to 24 (see below if you want details).
+- biome(id)
 
-taiga(modid:name, modid:name)
-...is like temp but the temperature is determined by the mod.  Usually the first biome is a snowy version and the second is warm version.
+Simply inserts the biome.
 
-wetness(modid:name, n, modid:name)
-...is like temp, but with wetness.  Wetness is 0 to 10.
+- terrain(id)
 
-biome(modid:name) 
-...will add the biome as an island or islands with a shallow ocean around them. Intended to be used to make non-islanding biome into special islands.  Biomes that normally look like islands (include a lot of water around the land) should not use this.
+Same as biome(id), but forces the tile's terrain type to "normal", ignoring any steep/plateau terrain hints for that section.
 
-OK, that's the quick and easy explanation.  For more details see below.
+- island(id)
 
+Can be used in ocean biome tables to create biome islands when noise surpasses an internal threshold.
 
-DETAILED: Using Biome List
+- noise(firstId, threshold, secondId)
 
-Inside the folders you find a variety of files.  The names explain themselves.  These are for adding biomes from other mods, and are not hard to add biome to, though you must becareful as a typo could crash Minecraft.  "Minecraft" folder is vanilla biomes and those from this mod.  Once you have run the mod there should also be file called BiomeList.txt; this is where you can find the full resource location names of all biome installed as of the last time you ran the game.  (Writing this can be turned off if you know you haved added any or don't want to update the config).
+If the noise value of the tile (0-9) is below the threshold, the first biome is chosen, otherwise the second is chosen. Useful for combining variants of biomes.
 
-To add biome you must edit the relevant files in the biomes folder.  Each adds biomes to a specific climate area.  There are four tag you can use to add biomes: biome, noise, seed, temp, and wetness.  Each is followed by biome information in parentheses.  In the exaples below modid:name means the full resource location and n means a whole number.  To avoid mistakes its a good idea to cut-and-paste from the BiomeList.txt.
+- central(edgeId, threshold, centerId)
 
-The biome tag will simply add a biome:
+Same as noise(), but favours the first biome near the landmass center, and the second near the landmass edge. Threshold (0-19) determines balance between edge and center. Useful for edge variants of biomes.
 
-biome(modid:name)
+- plateau(topBiome, threshold, bottomBiome)
 
-The noise tage will add two biome which will be selected based on a noise function.  This is usually used to add things like mesas and plataeus.
+Same as noise(), but forces steep, mesa-like terrain. Useful for canyons, mesas, or any other biomes that require steep terrain changes.
 
-noise(modid:name, n, modid:name)
+- seed(firstId, chance, secondId)
 
-The first biome will be selected if the noise level is less than n, otherwise the second.  Noise will range from 0 to 9. and 5 is a good choise for a mesa biome where one is the flat land and the other is the plataeu.
+Places the first biome 1 out of <chance> times, otherwise places the second biome. Useful for specifying rare variants of a biome.
 
-The seed tag look similar but with it the first biome has a 1 in n chance of appearing, otherwise you will get the second.  This is used for rare biomes or unusual variants of a biome.
+- temp(coldId, threshold, warmId)
 
-seed(modid:name, n, modid:name)
+Chooses the first biome if the local temperature is below the threshold (0-24), otherwise chooses the second biome. Useful for temperature variants. See below for temperature bands.
 
-The temp tag again looks similar, but here the first biome appear at a lower temperature and the second at a higher, while n the number below which the colder biome will appear.  This is used for things like seperating snowy from non-snowy taigas or push ice formation to the coldest areas.  More about temperatures appears later.
+- taiga(snowId, mildId)
 
-temp(modid:name, n, modid:name)
+Same as temp(), but uses an internal temperature boundary to specify snowy variants of biomes (6 when BoP is enabled, 7 otherwise). This only exists so that the boundary automatically updates when BoP's extended climate table is or isn't being used.
 
-The taiga tag is special version of the tmep tag.  I does not take a temperature variable; instead this will be be set based on which climate table you are using.  The first biome is colder (usually snowy), the second is warmer.
+- wetness(dryBiome, threshold, wetBiome)
 
-taiga(modid:name, modid:name)
+Chooses the first biome if the local humidity is below the threshold (0-9) otherwise chooses the second biome.
 
-The wetness tag is similar but here the first biome will appear in dryer areas, with n being the cutoff wetness.  This is usually used to for very wet forests such as temporate rain forests to only appear in very wet areas.
+*****
 
-wetness(modid:name, n, modid:name)
+WEIGHTS: every single command above also takes an additional value between 0.0 and 1.0, that specifies the likelihood of that entry being chosen overall. For example, biome(id) can be extended to biome(id, weight), and noise() can be extended to noise(firstId, threshold, secondId, weight).
 
-An example of how this can be used is in this file, which adds biome from the Traverse mod:
-http://www.mediafire.com/file/r7ehfjs5ir6r8by/biomelists-traverse.zip/file
+NESTING: commands can be nested. For example, you could write noise(seed(A, X, B), Z, temp(C, Y, B)).
 
+TEMPERATURE BANDS
 
-********************************
-
-About Temperature, Wetness, and the Lists
-
-Each list shows biome to appear at a different levels of temperature and wetness.  In general, there are five climate zone spread evenly accross five climate zone; each covers a range of five temperature levels:
+With BoP not enabled:
 
 0-4: Arctic (called “tundra,” it includes all the ice biomes)
 5-9: Subarctic: Taiga and cold plains
-10-14: Temporate: Forest and plains
+10-14: Temperate: Forest and plains
 15-19: Subtropical: Warm Forest, plains / savannas, scrub, and deserts
 20-24: Tropical: Jungles and savannas
 
-If you have Biome O'Plenty installed (and turned on in the config) things are different because BoP adds many biomes between the temperatures usual for subarctic and temporate, with BoP you have this:
+With BoP enabled:
 
 0-3: Arctic
 4-7: Subarctic
-8-11: Cool Temporate: Cool forest and cool plains
-12-15: Temporate
+8-11: Cool Temperate: Cool forest and cool plains
+12-15: Temperate
 16-20: Subtropical
 21-24: Tropical
-
-Note that there are no vanilla biomes in the cool zone, and if BoP is not used this zone will not exist.
 
 Oceans and special islands are different:
 
@@ -100,8 +88,8 @@ Cool: temperature < 16
 Warm: temperature < 21
 Hot: temperature at least 21
 
-If ocean list are empty the lists will spread out from cool.  If a swamp list is emply it will spread out from warm.  If a special islands list is empty it will use normal islands instead; that is, it will mainland biomes.
+If ocean lists are empty the lists will spread out from OceanCool.  If a swamp list is emply it will spread out from SwampWarm.  If a special islands list is empty it will use normal islands instead; that is, it will use mainland biomes.
 
-Wetness is on a scale of one to ten, but the actual meaning is relative to the climate zone it appears in.  Specifically, since most real-world deserts are in the subtropics low wetness means a drier climate than the same number somewhere else.
+Wetness is on a scale of one to ten, but the actual meaning is relative to the climate zone it appears in.  Specifically, since most real-world deserts are in the subtropics, low wetness means a drier climate than the same number somewhere else.
 
-There are few special lists.  Alpine is for mountain and is devided into dry and wet, with treed mountains treat as wet.  ChaparralScrub is the list for scrub, bush, and chaparral biomes that appear between plains and desests (mostly in the subtropics).  Parkland refers to an area between forest and plains biomes in the temperate zone; it may pick either a forest or plains biome, but is also where open forests go.  The special islands list are for biome that should usually exists as islands; if a biome has “island” or “archepeligo” in its name it probably belongs here.
+There are few special lists.  Alpine is for mountains and is devided into dry and wet, with treed mountains treated as wet.  ChaparralScrub is the list for scrub, bush, and chaparral biomes that appear between plains and deserts (mostly in the subtropics).  Parkland refers to an area between forest and plains biomes in the temperate zone; it may pick either a forest or plains biome, but is also where open forests go.  The special islands list are for biomes that should usually exist as islands; if a biome has “island” or “archepeligo” in its name it probably belongs here.

@@ -35,13 +35,13 @@ public class GetAlpine implements IBiomeSpecifier {
 		hotwet  = new BiomeList();
 		hotdry  = new BiomeList();
 		desert  = new BiomeList();
-		DefReader.readBiomeData(cold, "AplineCold.cfg");
-		DefReader.readBiomeData(wet,  "AplineWet.cfg");
-		DefReader.readBiomeData(dry,  "AplineDry.cfg");
-		DefReader.readBiomeData(warmwet, "AplineWetWarm.cfg");
-		DefReader.readBiomeData(warmdry, "AplineDryWarm.cfg");
-		DefReader.readBiomeData(hotwet,  "AplineWetHot.cfg");
-		DefReader.readBiomeData(hotdry,  "AplineDryHot.cfg");
+		DefReader.readBiomeData(cold, "AlpineCold.cfg");
+		DefReader.readBiomeData(wet,  "AlpineWet.cfg");
+		DefReader.readBiomeData(dry,  "AlpineDry.cfg");
+		DefReader.readBiomeData(warmwet, "AlpineWetWarm.cfg");
+		DefReader.readBiomeData(warmdry, "AlpineDryWarm.cfg");
+		DefReader.readBiomeData(hotwet,  "AlpineWetHot.cfg");
+		DefReader.readBiomeData(hotdry,  "AlpineDryHot.cfg");
 		DefReader.readBiomeData(desert,  "AlpineDesert.cfg");
 		if(wet.isEmpty()) {
 			wet.addItem(new LeafBiome(34));

@@ -466,7 +466,7 @@ public class ModBiomes {
 	
 	
 	private static void makeAdvancedRivers() {
-		river = new BiomeRiver(new Biome.BiomeProperties("Temporate River").setBaseHeight(-0.8f)
+		river = new BiomeRiver(new Biome.BiomeProperties("Temperate River").setBaseHeight(-0.8f)
 											            .setHeightVariation(0.0f)
 												        .setTemperature(0.7F)
 												        .setRainfall(0.5F)
