@@ -134,9 +134,20 @@ public class BiomeClimateTable implements IBiomeSpecifier {
 			return OCEAN.getBiome(tile);
 		}
         if(tile.getTemp() > 7 && ((tile.getWet() - tile.getVal() - tile.getHeight()) > 0)) {
-            boolean swampCandidate = (tile.getBiomeSeed() & 0x1) == 1;
+            int swampSeed = tile.getBiomeSeed();
+            boolean swampCandidate = (swampSeed & 0x1) == 1;
+            boolean allowSwamp = true;
+            if(tile.isBeach()) {
+                float blockChance = ConfigHandler.swampBeachBlock;
+                if(blockChance >= 1.0f) {
+                    allowSwamp = false;
+                } else if(blockChance > 0.0f) {
+                    double roll = ((swampSeed >>> 1) & 0x7fffffff) / (double)Integer.MAX_VALUE;
+                    allowSwamp = roll >= blockChance;
+                }
+            }
             tile.nextBiomeSeed();
-            if(swampCandidate && !tile.isBeach()) {
+            if(swampCandidate && allowSwamp) {
                 return SWAMP.getBiome(tile);
             }
         }
