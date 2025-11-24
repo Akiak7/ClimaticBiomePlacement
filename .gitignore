@@ -1,2 +1,4 @@
 /TableMaker/ClimaticBiomeTableMaker/nbproject/private/
 /TableMaker/ClimaticBiomeTableMaker/build/
+# macOS
+.DS_Store
