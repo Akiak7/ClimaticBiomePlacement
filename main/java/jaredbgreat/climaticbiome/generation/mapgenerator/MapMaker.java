@@ -18,6 +18,7 @@ import jaredbgreat.climaticbiome.util.Debug;
 import jaredbgreat.climaticbiome.util.NoiseMap2D;
 import jaredbgreat.climaticbiome.util.SpatialHash;
 import jaredbgreat.climaticbiome.util.SpatialHash.RandomAt;
+import java.util.Arrays;
 import net.minecraft.world.World;
 
 
@@ -136,6 +137,9 @@ public class MapMaker {
             tempIndex  += region.temp.length;
             wetIndex   += region.wet.length;
         }
+        Arrays.fill(basinNodes, basinIndex, basinNodes.length, null);
+        Arrays.fill(tempNodes, tempIndex, tempNodes.length, null);
+        Arrays.fill(wetNodes, wetIndex, wetNodes.length, null);
     }
 
 
