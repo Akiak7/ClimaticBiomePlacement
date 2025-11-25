@@ -491,9 +491,12 @@ public class MapMaker {
         if(!notLand(t) || (t.getX() < 1) || (t.getX() > rend)
                        || (t.getZ() < 1) || (t.getZ() > rend)) return;
         int beaches = 0;
-        for(int i = -2; i < 3; i++) 
+        for(int i = -2; i < 3; i++)
             for(int j = -2; j < 3; j++) {
-                ChunkTile x = premap[((t.getX() + i) * RSIZE * scale.whole) + t.getZ() + j];
+                int checkX = t.getX() + i;
+                int checkZ = t.getZ() + j;
+                if(tileIndexIsBad(checkX, checkZ)) continue;
+                ChunkTile x = premap[(checkX * RSIZE * scale.whole) + checkZ];
                 if(!notLand(x) && x.beach) {
                     beaches++;
                 }
