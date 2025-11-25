@@ -487,28 +487,30 @@ public class MapRegistry extends AbstractMapRegistry implements IMapRegistry {
     
     
     @Override
-	public float[] getTerrainBiomeGen(int x, int z, float[] in) {
-    	BasinNode[] heights = new BasinNode[49];
-    	BasinNode[] scales  = new BasinNode[49];
-    	for(int i = 0; i < 49; i++) {
-    		int x1 = (i / 7);
-    		int z1 = (i % 7);   
-    		int x2 = x + x1;
-    		int z2 = z + z1;
-    		heights[i] = new BasinNode(
-    				(x1 * 16) + (chunkNoise.intFor(x2, z2, 10) % 16),
-    				(z1 * 16) + (chunkNoise.intFor(x2, z2, 11) % 16),
-    				getBaseHeight(x2, z2), 
-    				(1.0 + chunkNoise.doubleFor(x2, z2, 12)));
-    		scales[i] = new BasinNode(
-    				(x1 * 16) + (chunkNoise.intFor(x2, z2, 10) % 16),
-    				(z1 * 16) + (chunkNoise.intFor(x2, z2, 11) % 16),
-    				getHeightScale(x2, z2), 
-    				(1.0 + chunkNoise.doubleFor(x2, z2, 12)));    				
-    	}
-    	for(int i = 0; i < 16; i++)
-    		for(int j = 0; j < 16; j++) {
-    			in[(i * 16) + j] = 
+        public float[] getTerrainBiomeGen(int x, int z, float[] in) {
+        TerrainBufferPool buffer = TerrainBufferPool.local();
+        BasinNode[] heights = buffer.acquireHeightNodes();
+        BasinNode[] scales  = buffer.acquireScaleNodes();
+        buffer.resetTerrainNodes();
+        for(int i = 0; i < 49; i++) {
+                int x1 = (i / 7);
+                int z1 = (i % 7);
+                int x2 = x + x1;
+                int z2 = z + z1;
+                heights[i].reset(
+                                (x1 * 16) + (chunkNoise.intFor(x2, z2, 10) % 16),
+                                (z1 * 16) + (chunkNoise.intFor(x2, z2, 11) % 16),
+                                getBaseHeight(x2, z2),
+                                (1.0 + chunkNoise.doubleFor(x2, z2, 12)));
+                scales[i].reset(
+                                (x1 * 16) + (chunkNoise.intFor(x2, z2, 10) % 16),
+                                (z1 * 16) + (chunkNoise.intFor(x2, z2, 11) % 16),
+                                getHeightScale(x2, z2),
+                                (1.0 + chunkNoise.doubleFor(x2, z2, 12)));
+        }
+        for(int i = 0; i < 16; i++)
+                for(int j = 0; j < 16; j++) {
+                        in[(i * 16) + j] =
     					(float)BasinNode.summateEffect(heights, 16 + i, 16 + j);
     			in[(i * 16) + j + 256] =  
     					(float)BasinNode.summateEffect(scales, 16 + i, 16 + j);
