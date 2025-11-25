@@ -42,6 +42,7 @@ public class BasinNode {
         double sum    = 0.0;
         double power, weakness;
         for(int i = 0; i < n.length; i++) {
+            if(n[i] == null) continue;
             if((n[i].x == t.tx) && (n[i].z == t.tz)) {
                 return (int)n[i].value;
             }
@@ -50,7 +51,7 @@ public class BasinNode {
             sum += power;
             effect += Math.max(((double)n[i].value) * power, 0);
         }
-        return (int)(effect / sum);
+        return sum == 0 ? 0 : (int)(effect / sum);
     }
     
     
@@ -59,6 +60,7 @@ public class BasinNode {
         double sum    = 0.0;
         double power, weakness;
         for(int i = 0; i < n.length; i++) {
+            if(n[i] == null) continue;
             double x = ((double)t.tx) * scale;
             double z = ((double)t.tz) * scale;
             if((n[i].x == (int)x) && (n[i].z == (int)z)) {
@@ -68,8 +70,8 @@ public class BasinNode {
             power = 1.0 / (weakness * weakness);
             sum += power;
             effect += Math.max(((double)n[i].value) * power, 0);
-        }        
-        return (effect / sum);
+        }
+        return sum == 0 ? 0 : (effect / sum);
     }
     
     
