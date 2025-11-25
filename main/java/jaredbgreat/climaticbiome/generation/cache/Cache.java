@@ -271,7 +271,7 @@ public class Cache <T extends ICachable> {
  30 seconds), though other criteria for isOldData() could be created.
      */
     public void cleanup() {
-    	int startSize = data.length;
+        boolean removed = false;
         for(int i = 0; i < data.length; i++) {
             if((data[i] != null) && (data[i].isOldData())) {
                 if(data[i] instanceof RegionMap) {
@@ -279,18 +279,22 @@ public class Cache <T extends ICachable> {
                 }
                 data[i] = null;
                 length--;
+                removed = true;
             }
         }
+        boolean resized = false;
         if(length < lowLimit) {
             shrink();
-        } else if(data.length != startSize) {
-        	T[] old = data;
-        	data = (T[]) new ICachable[data.length];
-        	for(int i = 0; i < length; i++) {
-        		if(old[i] != null) {
-        			rebucket(old[i]);
-        		}
-        	}
+            resized = true;
         }
-    } 
+        if(removed && !resized) {
+            T[] old = data;
+            data = (T[]) new ICachable[data.length];
+            for(int i = 0; i < old.length; i++) {
+                if(old[i] != null) {
+                    rebucket(old[i]);
+                }
+            }
+        }
+    }
 }
