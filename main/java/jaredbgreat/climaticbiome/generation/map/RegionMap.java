@@ -9,10 +9,8 @@ public class RegionMap extends AbstractCachable implements IRegionMap  {
     public final int dataSize;
     public final int cWidth;
     public final int bWidth;
-    
+
     final int[] data;
-    
-    final int[] shit;
 
     private static final boolean LIFETIME_LOGGING
             = Boolean.getBoolean("climaticbiome.regionmap.lifetimeLogging");
@@ -37,7 +35,6 @@ public class RegionMap extends AbstractCachable implements IRegionMap  {
         bWidth = width * 16;
         dataSize = width * width;
         data = new int[dataSize];
-        shit = new int[dataSize];
         logCreation();
     }
 
@@ -202,17 +199,15 @@ public class RegionMap extends AbstractCachable implements IRegionMap  {
      * @param z relative chunk x within region
      * @return The biome id as in int
      */
-    public float[] getHeightData(int x, int z) {
+        public float[] getHeightData(int x, int z) {
         return new float[]{getBaseHeight(x, z), getHeightScale(x, z)};
     }
 
 
-	@Override
-	public void setTerrainExpress(int terrain, int i) {
-		int fuck = data[i];
-		data[i] |= terrain << 16;
-		shit[i] |= terrain << 16;
-	}
+        @Override
+        public void setTerrainExpress(int terrain, int i) {
+                data[i] |= terrain << 16;
+        }
     
     
     
