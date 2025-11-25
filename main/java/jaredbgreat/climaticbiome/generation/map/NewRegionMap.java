@@ -78,11 +78,14 @@ public class NewRegionMap extends AbstractCachable implements IRegionMap {
     
     
     public boolean equals(Object other) {
-    	if(other instanceof IRegionMap) {
-    		return getCoords().equals(((NewRegionMap)other).getCoords());
-    	}
-    	return false;
-    	
+        if(this == other) {
+            return true;
+        }
+        if(other instanceof IRegionMap) {
+                return getCoords().equals(((IRegionMap)other).getCoords());
+        }
+        return false;
+
     }
     
     
