@@ -31,8 +31,9 @@ public class ImprovedBlockSetter implements IBlockSetter {
             for(int k = 0; k < 16; k++) {
                 int index = (i * 16) + k;
                 int height = heightmap[0][index];
-                
-                for (int y = 0; y < height; y++) {
+                int cappedHeight = Math.min(height, 256);
+
+                for (int y = 0; y < cappedHeight; y++) {
                     primer.setBlockState(i, y, k, STONE);
                 }
 
