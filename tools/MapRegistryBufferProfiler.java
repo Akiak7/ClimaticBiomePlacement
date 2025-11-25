@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -186,9 +187,15 @@ public final class MapRegistryBufferProfiler {
     }
 
     private static final class SimpleBufferPool {
+        private static final int INT_ARRAY_POOL_LIMIT = 4;
         private int[] chunkTiles;
         private int[] chunkGenTiles;
-        private final Map<Integer, int[]> intArrays = new HashMap<>();
+        private final Map<Integer, int[]> intArrays = new LinkedHashMap<Integer, int[]>(16, 0.75f, true) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<Integer, int[]> eldest) {
+                return size() > INT_ARRAY_POOL_LIMIT;
+            }
+        };
         private SimpleBiomeBasin[][] chunkBasins;
         private SimpleBiomeBasin[][] chunkGenBasins;
         private final Map<Long, SimpleBiomeBasin[][]> basinGrids = new HashMap<>();
