@@ -27,19 +27,24 @@ public abstract class AbstractCachable implements ICachable {
     
     @Override
     public boolean isOldData() {
-    	long t = MinecraftServer.getCurrentTimeMillis() - timestamp;
-    	return ((t > 60000000) || (t < 0)); // 10 minutes	
+        long t = MinecraftServer.getCurrentTimeMillis() - timestamp;
+        return ((t > 60000000) || (t < 0)); // 10 minutes
     }
-    
-    
+
+
     @Override
     public Coords getCoords() {
         return coords;
     }
-    
-    
+
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+
     public String toString() {
-    	return super.toString() + " at " + coords.toString();
+        return super.toString() + " at " + coords.toString();
     }
     
 }
