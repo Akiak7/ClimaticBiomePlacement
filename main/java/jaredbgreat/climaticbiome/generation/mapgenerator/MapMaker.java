@@ -7,9 +7,6 @@ package jaredbgreat.climaticbiome.generation.mapgenerator;
 
 import static jaredbgreat.climaticbiome.util.SpatialHash.absModulus;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import jaredbgreat.climaticbiome.configuration.ClimaticWorldSettings;
 import jaredbgreat.climaticbiome.generation.biome.BiomeClimateTable;
 import jaredbgreat.climaticbiome.generation.biome.IBiomeSpecifier;
@@ -49,7 +46,7 @@ public class MapMaker {
     
     private ClimateNode[] height;
     private BiomeBasin[][] subbiomes;
-    
+
     public final SpatialHash chunkNoise;
     public final SpatialHash regionNoise;
     public final SpatialHash biomeNoise;
@@ -60,8 +57,12 @@ public class MapMaker {
     private int zoff;    
 
     private ChunkTile[] premap;
-    
+
     private double[][] faulty;
+
+    private BasinNode[] basinNodes = new BasinNode[0];
+    private ClimateNode[] tempNodes = new ClimateNode[0];
+    private ClimateNode[] wetNodes = new ClimateNode[0];
     
     
     public MapMaker(SpatialHash chunkNoise, SpatialHash regionNoise, 
@@ -109,8 +110,45 @@ public class MapMaker {
                         out[index].use();
                 }
                 	index++;
-                }
+        }
         return out;
+    }
+
+
+    private void prepareRegionBuffers(Region[] regions) {
+        int basinCount = 0;
+        int tempCount = 0;
+        int wetCount = 0;
+        for(Region region : regions) {
+            basinCount += region.basins.length;
+            tempCount  += region.temp.length;
+            wetCount   += region.wet.length;
+        }
+        ensureBufferSize(basinCount, tempCount, wetCount);
+        int basinIndex = 0;
+        int tempIndex = 0;
+        int wetIndex = 0;
+        for(Region region : regions) {
+            System.arraycopy(region.basins, 0, basinNodes, basinIndex, region.basins.length);
+            System.arraycopy(region.temp, 0, tempNodes, tempIndex, region.temp.length);
+            System.arraycopy(region.wet, 0, wetNodes, wetIndex, region.wet.length);
+            basinIndex += region.basins.length;
+            tempIndex  += region.temp.length;
+            wetIndex   += region.wet.length;
+        }
+    }
+
+
+    private void ensureBufferSize(int basinCount, int tempCount, int wetCount) {
+        if(basinNodes.length < basinCount) {
+            basinNodes = new BasinNode[basinCount];
+        }
+        if(tempNodes.length < tempCount) {
+            tempNodes = new ClimateNode[tempCount];
+        }
+        if(wetNodes.length < wetCount) {
+            wetNodes = new ClimateNode[wetCount];
+        }
     }
     
     
@@ -118,21 +156,11 @@ public class MapMaker {
         Coords coords = datamap.getCoords();
         xoff = ((coords.getX() * 256) - 128) * scale.whole;
         zoff = ((coords.getZ() * 256) - 128) * scale.whole;
-		Region[] regions = findRegions(coords.getX(), coords.getZ());
-        ArrayList<BasinNode> basins = new ArrayList<>();
-        ArrayList<ClimateNode> temp = new ArrayList<>();
-        ArrayList<ClimateNode> wet = new ArrayList<>();
-        for(Region region : regions) {
-            basins.addAll(Arrays.asList(region.basins));
-            temp.addAll(Arrays.asList(region.temp));
-            wet.addAll(Arrays.asList(region.wet));
-        }
-        BasinNode[] basinAr = basins.toArray(new BasinNode[basins.size()]);
-        ClimateNode[] tempAr = temp.toArray(new ClimateNode[temp.size()]);
-        ClimateNode[] wetAr = wet.toArray(new ClimateNode[wet.size()]);
-        
+                Region[] regions = findRegions(coords.getX(), coords.getZ());
+        prepareRegionBuffers(regions);
+
         SpatialHash random = chunkNoise;
-        makeLandmass(basinAr, coords.getX(), coords.getZ(), random);
+        makeLandmass(basinNodes, coords.getX(), coords.getZ(), random);
         
         NoiseMap2D climateMaker 
                 = new NoiseMap2D(chunkNoise, RSIZE * scale.whole, 
@@ -144,8 +172,8 @@ public class MapMaker {
         doubleNoise = averageNoise(premap, makeDoubleNoise(random, 1));
         for(int i = 0; i < premap.length; i++) {
             premap[i].temp = (int)Math.max(Math.min(
-                    ClimateNode.summateEffect(tempAr, premap[i], 
-                    doubleNoise[i], scale.inv) + 
+                    ClimateNode.summateEffect(tempNodes, premap[i],
+                    doubleNoise[i], scale.inv) +
                     climateNoise[i / (RSIZE * scale.whole)]
                             [i % (RSIZE * scale.whole)], 24), 0);
         }
@@ -153,8 +181,8 @@ public class MapMaker {
         climateNoise = climateMaker.process(129);
         doubleNoise = averageNoise(premap, makeDoubleNoise(random, 2));
         for(int i = 0; i < premap.length; i++) {
-            premap[i].wet = (int)Math.max(Math.min(ClimateNode.summateEffect(wetAr, premap[i], 
-                    doubleNoise[i], scale.inv) + 
+            premap[i].wet = (int)Math.max(Math.min(ClimateNode.summateEffect(wetNodes, premap[i],
+                    doubleNoise[i], scale.inv) +
                     climateNoise[i / (RSIZE * scale.whole)]
                             [i % (RSIZE * scale.whole)], 9), 0);
         }
