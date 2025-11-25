@@ -12,6 +12,10 @@ import jaredbgreat.climaticbiome.generation.mapgenerator.TerrainType;
 import jaredbgreat.climaticbiome.util.SpatialHash;
 
 import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -141,102 +145,111 @@ public class MapRegistry extends AbstractMapRegistry implements IMapRegistry {
 	}
 	
 	
-	private void readMap(RegionMap map) {
-		Coords coords = map.getCoords();
-		int x = coords.getX();
-		int z = coords.getZ();
-		if(!cansave) {
-			return;
-		}
-		File file = getSaveFile(x, z);
-		int[] data = map.getData();
-		if(file != null && file.exists()) {
-			try {				
-				FileInputStream fs = new FileInputStream(file);
-				for(int i = 0; i < dataSize; i++) {
-						data[i] = (short)fs.read();
-						data[i] |= (fs.read() << 8);
-					}
-				fs.close();
-				if(altChunks) {
-					readTerrainData(data, x, z);
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}			
-		} else {
-			initializeMap(map);
-		}
-	}
-	
-	
-	private void readTerrainData(int[] data, int x, int z) {
-		File file = getSaveTerrain(x, z);
-		if(file != null && file.exists()) {
-			try {				
-				FileInputStream fs = new FileInputStream(file);
-				for(int i = 0; i < dataSize; i++) {
-						data[i] |= (fs.read() << 16);
-						data[i] |= (fs.read() << 24);
-					}
-				fs.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}			
-		} else {
-			TerrainPrimer.makeFromVanilla(data);
-			writeTerrainData(data, x, z);
-		}
-	}
-	
-	
-	private void writeMap(RegionMap map) {
-		Coords coords = map.getCoords();
-		int x = coords.getX();
-		int z = coords.getZ();
-		File file = getSaveFile(x, z);
-		if(file != null && !file.exists()) { 
-			int[] data = map.getData();
-			try {
-				FileOutputStream fs = new FileOutputStream(file);
-				for(int i = 0; i < dataSize; i++) {
-						fs.write(data[i] & 0xff);
-						fs.write((data[i] & 0xff00) >> 8);
-					}
-				fs.close();
-				if(altChunks) {
-					writeTerrainData(data, x, z);
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	
-	private void writeTerrainData(int[] data, int x, int z) {
-		File file = getSaveTerrain(x, z);
-		if(file != null && !file.exists()) { 
-			try {
-				FileOutputStream fs = new FileOutputStream(file);
-				for(int i = 0; i < dataSize; i++) {
-						fs.write((data[i] & 0xff0000) >> 16);
-						fs.write((data[i] & 0xff000000) >>> 24);
-					}
-				fs.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+        private void readMap(RegionMap map) {
+                Coords coords = map.getCoords();
+                int x = coords.getX();
+                int z = coords.getZ();
+                if(!cansave) {
+                        return;
+                }
+                File file = getSaveFile(x, z);
+                int[] data = map.getData();
+                if(file != null && file.exists()) {
+                        try (DataInputStream fs = new DataInputStream(
+                                        new BufferedInputStream(new FileInputStream(file)))) {
+                                byte[] buffer = new byte[dataSize * 2];
+                                fs.readFully(buffer);
+                                int index = 0;
+                                for(int i = 0; i < dataSize; i++) {
+                                        int low = buffer[index++] & 0xff;
+                                        int high = buffer[index++] & 0xff;
+                                        data[i] = (high << 8) | low;
+                                }
+                                if(altChunks) {
+                                        readTerrainData(data, x, z);
+                                }
+                        } catch (FileNotFoundException e) {
+                                        e.printStackTrace();
+                        } catch (IOException e) {
+                                        e.printStackTrace();
+                        }
+                } else {
+                        initializeMap(map);
+                }
+        }
+
+
+        private void readTerrainData(int[] data, int x, int z) {
+                File file = getSaveTerrain(x, z);
+                if(file != null && file.exists()) {
+                        try (DataInputStream fs = new DataInputStream(
+                                        new BufferedInputStream(new FileInputStream(file)))) {
+                                byte[] buffer = new byte[dataSize * 2];
+                                fs.readFully(buffer);
+                                int index = 0;
+                                for(int i = 0; i < dataSize; i++) {
+                                        data[i] |= (buffer[index++] & 0xff) << 16;
+                                        data[i] |= (buffer[index++] & 0xff) << 24;
+                                }
+                        } catch (FileNotFoundException e) {
+                                        e.printStackTrace();
+                        } catch (IOException e) {
+                                        e.printStackTrace();
+                        }
+                } else {
+                        TerrainPrimer.makeFromVanilla(data);
+                        writeTerrainData(data, x, z);
+                }
+        }
+
+
+        private void writeMap(RegionMap map) {
+                Coords coords = map.getCoords();
+                int x = coords.getX();
+                int z = coords.getZ();
+                File file = getSaveFile(x, z);
+                if(file != null && !file.exists()) {
+                        int[] data = map.getData();
+                        try (DataOutputStream fs = new DataOutputStream(
+                                        new BufferedOutputStream(new FileOutputStream(file)))) {
+                                byte[] buffer = new byte[dataSize * 2];
+                                int index = 0;
+                                for(int i = 0; i < dataSize; i++) {
+                                        buffer[index++] = (byte)(data[i] & 0xff);
+                                        buffer[index++] = (byte)((data[i] & 0xff00) >> 8);
+                                }
+                                fs.write(buffer);
+                                if(altChunks) {
+                                        writeTerrainData(data, x, z);
+                                }
+                        } catch (FileNotFoundException e) {
+                                        e.printStackTrace();
+                        } catch (IOException e) {
+                                        e.printStackTrace();
+                        }
+                }
+        }
+
+
+        private void writeTerrainData(int[] data, int x, int z) {
+                File file = getSaveTerrain(x, z);
+                if(file != null && !file.exists()) {
+                        try (DataOutputStream fs = new DataOutputStream(
+                                        new BufferedOutputStream(new FileOutputStream(file)))) {
+                                byte[] buffer = new byte[dataSize * 2];
+                                int index = 0;
+                                for(int i = 0; i < dataSize; i++) {
+                                        buffer[index++] = (byte)((data[i] & 0xff0000) >> 16);
+                                        buffer[index++] = (byte)((data[i] & 0xff000000) >>> 24);
+                                }
+                                fs.write(buffer);
+                        } catch (FileNotFoundException e) {
+                                        e.printStackTrace();
+                        } catch (IOException e) {
+                                        e.printStackTrace();
+                        }
+                }
+        }
 		
 	
 	/**
