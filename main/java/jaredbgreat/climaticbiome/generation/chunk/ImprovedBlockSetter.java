@@ -27,21 +27,23 @@ public class ImprovedBlockSetter implements IBlockSetter {
 	
     public void setBlocksInChunk(int x, int z, ChunkPrimer primer) {
     	int[][] heightmap = getHeihtmapForChunk(x, z, sprandom);
-    	for(int i = 0; i < 16; i++) 
-			for(int k = 0; k < 16; k++) {
-				// I've put too much time, stress, and self-destruction 
-				// into trying to figure out cliffs/overhangs, and am 
-				// still stumped.  This should work for the "Minecraft 
-				// terrain is too unrealistic" crowd, and is fast.
-				for(int j = 0; j < 256; j++) {
-					int h = heightmap[0][(i * 16) + k];
-					if((j < h)) {
-				        primer.setBlockState(i, j, k, STONE);
-				    } else if (j < 63) {
-				        primer.setBlockState(i, j, k, WATER);
-					}
-    			}
-		}
+        for(int i = 0; i < 16; i++) {
+            for(int k = 0; k < 16; k++) {
+                int index = (i * 16) + k;
+                int height = heightmap[0][index];
+                
+                for (int y = 0; y < height; y++) {
+                    primer.setBlockState(i, y, k, STONE);
+                }
+
+                if(height < 63) {
+                    int waterStart = Math.max(height, 0);
+                    for (int y = waterStart; y < 63; y++) {
+                        primer.setBlockState(i, y, k, WATER);
+                    }
+                }
+            }
+        }
     }
     
     
