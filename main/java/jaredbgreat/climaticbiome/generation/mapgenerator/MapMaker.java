@@ -40,7 +40,11 @@ public class MapMaker {
     ClimaticWorldSettings settings;
     public static int sporaticMountains;
 
-    private final Cache<Region> regionCache = new Cache(32);
+    private static final int REGION_CACHE_MAX_ENTRIES = 512;
+    private static final int REGION_CACHE_CLEANUP_INTERVAL = 64;
+
+    private final Cache<Region> regionCache = new Cache(32, REGION_CACHE_MAX_ENTRIES);
+    private int regionCacheAccesses;
     
     private MutableCoords regionCoords = new MutableCoords(); 
     private MutableCoords chunkCoords = new MutableCoords(); 
@@ -97,11 +101,14 @@ public class MapMaker {
     
     
     private Region[] findRegions(int x, int z) {
+        if((++regionCacheAccesses % REGION_CACHE_CLEANUP_INTERVAL) == 0) {
+            regionCache.cleanup();
+        }
         Region[] out = new Region[9];
         int index = 0;
         for(int i = -1; i < 2; i++)
             for(int j = -1; j < 2; j++) {
-            	regionCoords.init(x + i, z + j);
+                regionCoords.init(x + i, z + j);
                 out[index] = regionCache.get(regionCoords);
                 if(out[index] == null) {
                 	out[index] = new Region(x + i, z + j, 
