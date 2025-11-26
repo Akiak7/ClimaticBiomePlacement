@@ -64,8 +64,8 @@ public class ClimaticRealisticWorldType extends WorldType {
     @Override
     @SideOnly(Side.CLIENT)
     public void onCustomizeButton(Minecraft mc, GuiCreateWorld guiCreateWorld) {
-        mc.displayGuiScreen(new GuiConfigureWorld(guiCreateWorld, 
-        		ClimaticWorldSettings.getQueued().toJsonString(), false));
+        mc.displayGuiScreen(new GuiConfigureWorld(guiCreateWorld,
+                        ClimaticWorldSettings.getQueued(false).toJsonString(), false));
     }
 
 
