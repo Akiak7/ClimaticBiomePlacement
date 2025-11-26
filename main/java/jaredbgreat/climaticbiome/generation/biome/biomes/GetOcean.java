@@ -157,7 +157,7 @@ public class GetOcean implements IBiomeSpecifier {
 
         private double shorelineBlend(ChunkTile tile) {
                 double edge = Math.max(0.0, Math.min(1.0, (tile.getHeight() - 0.05) * 4.0));
-                return Math.max(0.35, edge);
+                return Math.max(0.35, Math.min(0.95, edge));
         }
 
         private double selectionJitter(int seed) {
