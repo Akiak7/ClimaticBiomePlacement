@@ -86,7 +86,7 @@ public class ClimaticWorldSettings {
 			if(JsonUtils.hasField(jsonObj, "addIslands")) 		
 				addIslands = JsonUtils.getBoolean(jsonObj, "addIslands");
 			
-			if(JsonUtils.hasField(jsonObj, "addBeaches")) 		
+			if(JsonUtils.hasField(jsonObj, "extraBeaches"))
 				extraBeaches = JsonUtils.getBoolean(jsonObj, "extraBeaches");
 			
 			if(JsonUtils.hasField(jsonObj, "rockyScrub")) 		

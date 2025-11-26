@@ -58,7 +58,7 @@ public class ConfigHandler {
 	public static String basaltBlock = BASALT_BLOCK;
 	public static String ashBlock = ASH_BLOCK;
 
-	static boolean addIslands = true;
+        static boolean addIslands = false;
 	static boolean extraBeaches = true;	
 	static boolean volcanicIslands = false;
 	static boolean deepSand = true;
@@ -202,10 +202,10 @@ public class ConfigHandler {
 						+ "Realistic world type, especially toward the middle of ranges (biomes).  \n"
 						+ "This often doesn't work as well with Climatic Vanilla types but can still be used.");
 		
-		addIslands = config.getBoolean("AddIslands", "General", true, 
-						"If true extra islands will be generated in the ocean \n "
-						+ "for reason I don't understand these islands tend to be \n "
-						+ "chunky and squarish, but are interesting to find.");
+                addIslands = config.getBoolean("AddIslands", "General", false,
+                                                "If true extra islands will be generated in the ocean \n "
+                                                + "for reason I don't understand these islands tend to be \n "
+                                                + "chunky and squarish, but are interesting to find.");
 		
 		moreMansion = config.getBoolean("MoreMansion", "General", true, 
 						"If true woodConfigHandler.rivers && land mansion might appear in all forest types; \n"
