@@ -48,7 +48,7 @@ public class ConfigHandler {
         public static boolean includeRivers = true;
         public static boolean includeVolcano = true;
 
-        public static float swampBeachBlock = 1.0f;
+        public static float swampBeachBlock = 0.0f;
 	
 	public static boolean biomeWater = false;
 	
@@ -320,7 +320,7 @@ public class ConfigHandler {
                                                 "If this and MountainVariants are both true there will \n"
                                                 + "be volcanoes.");
 
-                swampBeachBlock = config.getFloat("SwampBeachBlock", "Biomes", 1.0f, 0.0f, 1.0f,
+                swampBeachBlock = config.getFloat("SwampBeachBlock", "Biomes", 0.0f, 0.0f, 1.0f,
                                                 "How much swamps should be blocked from overwriting beaches (0 to 1).");
 		
 		
