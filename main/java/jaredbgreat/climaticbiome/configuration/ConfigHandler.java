@@ -116,7 +116,7 @@ public class ConfigHandler {
 				 && net.minecraftforge.fml.common.Loader.isModLoaded("nt");
 		
 		useAby = config.getBoolean("UseAbyssalCraft", "Compat", true, 
-						"If true it will use Ayssal Craft overworld biomes in its world type. \n"
+						"If true it will use Abyssal Craft overworld biomes in its world type. \n"
 						+ "If Abyssal Craft is not installed this does nothing.")
 				 && net.minecraftforge.fml.common.Loader.isModLoaded("abyssalcraft");
 		
@@ -126,7 +126,7 @@ public class ConfigHandler {
 				 && net.minecraftforge.fml.common.Loader.isModLoaded("auxbiomes");
 		
 		useEnvirons = config.getBoolean("UseEnvirons++", "Compat", true, 
-						"If true it will use Evirons++ biomes in its world type. \n"
+						"If true it will use Environs++ biomes in its world type. \n"
 						+ "If Environs++ is not installed this does nothing.")
 				 && net.minecraftforge.fml.common.Loader.isModLoaded("environs");
 		
@@ -141,13 +141,13 @@ public class ConfigHandler {
 				 && net.minecraftforge.fml.common.Loader.isModLoaded("valoegheses_be");
 		
 		useBYG = config.getBoolean("UseBiomeYoullGo", "Compat", true, 
-						"If true it will use Biome's You'll Go in its world type. \n"
+						"If true it will use Biomes You'll Go in its world type. \n"
 						+ "If Biomes You'll Go is not installed this does nothing.")
 				 && net.minecraftforge.fml.common.Loader.isModLoaded("byg");
 		
 		useDefiled = config.getBoolean("UseDefiledLands", "Compat", true, 
-						"If true it will use Defiled Land's biomes in its world type. \n"
-						+ "If Zoestria is not installed this does nothing.")
+						"If true it will use Defiled Lands biomes in its world type. \n"
+						+ "If Defiled Lands is not installed this does nothing.")
 				 && net.minecraftforge.fml.common.Loader.isModLoaded("defiledlands");
 		
 		useRWmod = config.getBoolean("UseRedwoodsMod", "Compat", true, 
@@ -166,7 +166,7 @@ public class ConfigHandler {
 						+ "other biomes are provided for a climate area.");	
 		
 		useBoPTable = config.getBoolean("ExpandedClimateTable", "Compat", true, 
-						"If true the climate table for with 6 tmeperature zone instead \n"
+						"If true use climate table with 6 temperature zones instead \n"
 						+ "of the original with only 5.");	
 		
 		volcanicIslands = config.getBoolean("VolcanicIslands", "General", true, 
@@ -176,13 +176,13 @@ public class ConfigHandler {
 						"If true a list of all biome resource locations will be saved to a file.");
 		
 		writeWTLists = config.getBoolean("WriteWorldTypeList", "Compat", false, 
-						"If true a list creatable world types by resource location; /n"
+						"If true list creatable world types by resource location; /n"
 						+ "WARNING: This has been known to crash the game with certain setups \n"
 						+ "(core mods?  Forge version?).");
 
 		
 		useCfg = config.getBoolean("UseCustomConfigs", "Compat", true, 
-						"If true it read will files from the BiomeConfig/custom folder to extends \n"
+						"If true it will read files from the BiomeConfig/custom folder to extend \n"
 						+ "its worldgen. This is where to add extra biomes not otherwise supported.");
 		
 		extraBeaches = config.getBoolean("ExtraBeaches", "General", false, 
@@ -198,7 +198,7 @@ public class ConfigHandler {
 						"If true some biomes (mostly wetlands) will have special colors for their water.");
 		
 		bigMountains = config.getBoolean("BiggerMountains", "ClimaticRealistic", true, 
-						"If true mountains be organized into ranges. They should be bigger in Climatic \n"
+						"If true mountains will be organized into ranges. They should be bigger in \n"
 						+ "Realistic world type, especially toward the middle of ranges (biomes).  \n"
 						+ "This often doesn't work as well with Climatic Vanilla types but can still be used.");
 		
