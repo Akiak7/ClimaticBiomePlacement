@@ -40,12 +40,18 @@ implements GuiSlider.FormatHelper, GuiPageButtonList.GuiResponder {
     boolean vanilla;
     
 
-	public GuiConfigureWorld(GuiCreateWorld guiCreateWorld,
-			String chunkProviderSettingsJson, boolean vanilla) {
+        public GuiConfigureWorld(GuiCreateWorld guiCreateWorld,
+                        String chunkProviderSettingsJson, boolean vanilla) {
         parent = (GuiCreateWorld)guiCreateWorld;
-        settings = ClimaticWorldSettings.getNew();
+        if((chunkProviderSettingsJson != null)
+                        && !chunkProviderSettingsJson.isEmpty()) {
+                settings = ClimaticWorldSettings.getNew()
+                                .fromJsonString(chunkProviderSettingsJson);
+        } else {
+                settings = ClimaticWorldSettings.getNew();
+        }
         this.vanilla = vanilla;
-	}
+        }
 	
 	
 	@Override
