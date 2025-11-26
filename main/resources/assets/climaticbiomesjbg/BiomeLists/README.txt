@@ -88,8 +88,8 @@ Cool: temperature < 16
 Warm: temperature < 21
 Hot: temperature at least 21
 
-If ocean lists are empty the lists will spread out from OceanCool.  If a swamp list is emply it will spread out from SwampWarm.  If a special islands list is empty it will use normal islands instead; that is, it will use mainland biomes.
+If ocean lists are empty the lists will spread out from OceanCool.  If a swamp list is empty it will spread out from SwampWarm.  If a special islands list is empty it will use normal islands instead; that is, it will use mainland biomes.
 
 Wetness is on a scale of one to ten, but the actual meaning is relative to the climate zone it appears in.  Specifically, since most real-world deserts are in the subtropics, low wetness means a drier climate than the same number somewhere else.
 
-There are few special lists.  Alpine is for mountains and is devided into dry and wet, with treed mountains treated as wet.  ChaparralScrub is the list for scrub, bush, and chaparral biomes that appear between plains and deserts (mostly in the subtropics).  Parkland refers to an area between forest and plains biomes in the temperate zone; it may pick either a forest or plains biome, but is also where open forests go.  The special islands list are for biomes that should usually exist as islands; if a biome has “island” or “archepeligo” in its name it probably belongs here.
+There are a few special lists.  Alpine is for mountains and is divided into dry and wet, with treed mountains treated as wet.  ChaparralScrub is the list for scrub, bush, and chaparral biomes that appear between plains and deserts (mostly in the subtropics).  Parkland refers to an area between forest and plains biomes in the temperate zone; it may pick either a forest or plains biome, but is also where open forests go.  The special islands list are for biomes that should usually exist as islands; if a biome has “island” or “archepeligo” in its name it probably belongs here.

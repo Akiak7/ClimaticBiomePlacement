@@ -176,7 +176,7 @@ public class ConfigHandler {
 						"If true a list of all biome resource locations will be saved to a file.");
 		
 		writeWTLists = config.getBoolean("WriteWorldTypeList", "Compat", false, 
-						"If true list creatable world types by resource location; /n"
+						"If true write list of creatable world types by resource location; \n"
 						+ "WARNING: This has been known to crash the game with certain setups \n"
 						+ "(core mods?  Forge version?).");
 
@@ -189,7 +189,7 @@ public class ConfigHandler {
 						"If true there will be more beaches.");
 		
 		rockyScrub = config.getBoolean("RockyScrub", "General", true, 
-						"If true scrub biomes will have cobble bolders.");
+						"If true scrub biomes will have cobble boulders.");
 		
 		deepSand = config.getBoolean("DeepSandInScrub", "General", true, 
 						"If true sand in dry scrub will be 3-4 blocks deep, otherwise it will be 1.");
@@ -204,19 +204,19 @@ public class ConfigHandler {
 		
                 addIslands = config.getBoolean("AddIslands", "General", false,
                                                 "If true extra islands will be generated in the ocean \n "
-                                                + "for reason I don't understand these islands tend to be \n "
+                                                + "for reasons I don't understand these islands tend to be \n "
                                                 + "chunky and squarish, but are interesting to find.");
 		
 		moreMansion = config.getBoolean("MoreMansion", "General", true, 
 						"If true woodConfigHandler.rivers && land mansion might appear in all forest types; \n"
-						+ " this fits the mods theme and eliminates a major lag spike but \n"
-						+ " will effect all world types (even vanilla); depending on Forge / \n"
+						+ " this fits the mod's theme and eliminates a major lag spike but \n"
+						+ " will affect all world types (even vanilla); depending on Forge / \n"
 						+ " Java / OS / unknown factors it might not work.");
 				
 		addPines = config.getBoolean("AddPines", "ModdedBlocks", true, 
 						"If true modded pine trees will appear in warmer climate. \n"
 						+ "If false spruce will be added instead.  \n"
-						+ "This does not effect if pine blocks technically exist. \n");
+						+ "This does not affect if pine blocks technically exist. \n");
 		
 		pineBlocks = config.getBoolean("PineBlocks", "ModdedBlocks", true, 
 						"If pine blocks exist and pines will be made from them. \n"
@@ -241,8 +241,8 @@ public class ConfigHandler {
 		
 		badBiomeSpam = config.getBoolean("ErrorsForBadBiomeID", "Debugging", false, 
 						"If true an error message will be printed to the console whenever a \n"
-						+ "biome can't be fount for an ID (this will spam the console and may \n"
-						+ "freeze the game).  Othewise they will silently become oceans.");
+						+ "biome can't be found for an ID (this will spam the console and may \n"
+						+ "freeze the game).  Otherwise they will silently become oceans.");
 		
 		makeDefault = config.getBoolean("MakeDefaut", "General", false, 
 						"If true the Climatic Vanilla world type will be moved to the top of the list \n"
@@ -250,7 +250,7 @@ public class ConfigHandler {
 						+ "(Note that it will be impossible to create a default vanilla world.)");
 		
 		makeRealisticDefault = config.getBoolean("MakeDefautRealistic", "General", false, 
-						"If this an MakeDefault are both true the climatic realistic \n"
+						"If this and MakeDefault are both true the climatic realistic \n"
 						+ "world type will become the default. \n"
 						+ "(Note that it will be impossible to create a default vanilla world.)");
 		
@@ -273,7 +273,7 @@ public class ConfigHandler {
 						+ "     2 = x2 ->  8192 x 8192  blocks\n"
 						+ "     3 = x3 -> 12288 x 12288 blocks\n"
 						+ "     4 = x4 -> 16384 x 16384 blocks\n"
-						+ "WARNING: Chaning this will break existing worlds!!!"));
+						+ "WARNING: Changing this will break existing worlds!!!"));
 		
 		forceWhole = config.getBoolean("ForceWholeBiome", "Size", false, 
 				"If true biome areas will not be split.  Instead they will all be the same biome. \n "
@@ -302,7 +302,7 @@ public class ConfigHandler {
 						+ "islands are.") + 6.0;
 		
 		failfast = config.getBoolean("FailFast", "debugging", false, 
-						"If the game should crash with an exception when failign to read a biome. \n"
+						"If the game should crash with an exception when failing to read a biome. \n"
 						+ "This is for modpack authors to catch config bugs, not for general use.");
 		
 		includeRivers  = config.getBoolean("RiverVariants", "Biomes", true, 
@@ -310,7 +310,7 @@ public class ConfigHandler {
 		includeForests = config.getBoolean("ForestVariants", "Biomes", true, 
 						"If true there will be temperature specific forests.");
 		includeMountains = config.getBoolean("MountainVariants", "Biomes", true, 
-						"If true there will be climate specific mountains /n"
+						"If true there will be climate specific mountains \n"
 						+ "and montane forests.");
 		includePlains   = config.getBoolean("PlainsVariants", "Biomes", true, 
 						"If true there will be temperature specific plains.");
