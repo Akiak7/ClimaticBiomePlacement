@@ -38,7 +38,7 @@ public class GetBeach implements IBiomeSpecifier {
 		DefReader.readBiomeData(cold, "BeachCold.cfg");
 		DefReader.readBiomeData(rock, "BeachRocky.cfg");
 		DefReader.readBiomeData(cool, "BeachCool.cfg");
-		DefReader.readBiomeData(temp,  "BeachTemporate.cfg");
+		DefReader.readBiomeData(temp,  "BeachTemperate.cfg");
 		DefReader.readBiomeData(warm,  "BeachWarm.cfg");
 		DefReader.readBiomeData(hot,  "BeachHot.cfg");
 		if(cold.isEmpty()) cold.addItem(new LeafBiome(Biome.getBiome(26)));

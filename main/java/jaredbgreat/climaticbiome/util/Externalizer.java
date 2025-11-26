@@ -46,7 +46,7 @@ public class Externalizer {
 		"BeachCold.cfg",
 		"BeachCool.cfg",
 		"BeachRocky.cfg",
-		"BeachTemporate.cfg",
+		"BeachTemperate.cfg",
 		"BeachWarm.cfg",
 		"BeachHot.cfg",
 		"ChaparralScrub.cfg",
