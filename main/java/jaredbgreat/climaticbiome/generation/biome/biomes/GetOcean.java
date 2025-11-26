@@ -102,49 +102,67 @@ public class GetOcean implements IBiomeSpecifier {
 	}	
 
 	
-	@Override
-	public long getBiome(ChunkTile tile) {
-		tile.setVanilla();
-		int temp = tile.getTemp();
-		int seed = tile.getBiomeSeed();
-		int iceNoise = tile.getNoise();
-		if(makeCoasts && tile.isBeach() && !tile.isRiver() && !swampy(tile)) {
-			tile.setSteep();
-	        if(((iceNoise / 2) - temp) > -1) {
-	        	return fcoasts;
-	        }
-			return coasts;
-		}
-		tile.nextBiomeSeed();
-        if(settings.addIslands && (((seed % 5) == 0) 
-        					   && notNearEdge(tile))) {
-    		int noise = tile.getNoise();
-    		if((seed % 31) == 0) {
-    				if((tile.getTemp() > 9) && (tile.getTemp() < 19)
-    						                && (tile.getWet() > 3)) {
-    					if(noise < 5) {
-    						return 14;
-    					}
-    					if(noise < 7) {
-    						return 15;
-    					}
-    				}
-    				return 0;				
-    			} else if(settings.addIslands && ((seed & 1) == 0)) {
-    				if(noise > (4 + (seed % 3))) {
-    					return islands1.getBiome(tile.nextBiomeSeed());
-    				}
-    			} else if(settings.addIslands) {
-    				if(noise > (seed % 3)) {
-    					return islands2.getBiome(tile.nextBiomeSeed());
-    				}
-    			}
-    			return getForIsland(tile);
-    		} else if((tile.getHeight()) < 0.2) {
-    			return getDeepOcean(tile, temp, iceNoise);
-    		}
-    	return getShallowOcean(tile, temp, iceNoise);
+        @Override
+        public long getBiome(ChunkTile tile) {
+                tile.setVanilla();
+                int temp = tile.getTemp();
+                int seed = tile.getBiomeSeed();
+                int iceNoise = tile.getNoise();
+                if(makeCoasts && tile.isBeach() && !tile.isRiver() && !swampy(tile)) {
+                        tile.setSteep();
+                if(((iceNoise / 2) - temp) > -1) {
+                        return fcoasts;
+                }
+                        return coasts;
+                }
+                tile.nextBiomeSeed();
+                double islandNoise = islandProbability(tile, seed);
+                if(settings.addIslands && (islandNoise > 0.45) && notNearEdge(tile)) {
+                        double selection = islandNoise + selectionJitter(seed);
+                        if(selection > 0.85) {
+                                if((tile.getTemp() > 9) && (tile.getTemp() < 19)
+                                                                && (tile.getWet() > 3)) {
+                                        if(islandNoise < 0.55) {
+                                                return 14;
+                                        }
+                                        if(islandNoise < 0.7) {
+                                                return 15;
+                                        }
+                                }
+                                return 0;
+                        } else if(settings.addIslands && (selection > 0.65)) {
+                                if(islandNoise > shorelineBlend(tile)) {
+                                        return islands1.getBiome(tile.nextBiomeSeed());
+                                }
+                        } else if(settings.addIslands && (selection > 0.5)) {
+                                if(islandNoise > 0.5) {
+                                        return islands2.getBiome(tile.nextBiomeSeed());
+                                }
+                        }
+                        return getForIsland(tile);
+                } else if((tile.getHeight()) < 0.2) {
+                        return getDeepOcean(tile, temp, iceNoise);
+                }
+        return getShallowOcean(tile, temp, iceNoise);
     }
+
+        private double islandProbability(ChunkTile tile, int seed) {
+                double baseNoise = ((double)tile.getNoise()) / 9.0;
+                double shoreline = shorelineBlend(tile);
+                double heightBias = Math.min(1.0, Math.max(0.0, (tile.getHeight() + 0.2) * 1.8));
+                double raw = (baseNoise * 0.7) + (heightBias * 0.3);
+                double jitter = ((double)(seed & 0xffff)) / 0xffff;
+                return Math.max(0.0, Math.min(1.0, (raw * 0.85) + (jitter * 0.15 * shoreline)));
+        }
+
+        private double shorelineBlend(ChunkTile tile) {
+                double edge = Math.max(0.0, Math.min(1.0, (tile.getHeight() - 0.05) * 4.0));
+                return Math.max(0.35, Math.min(0.95, edge));
+        }
+
+        private double selectionJitter(int seed) {
+                return ((double)((seed >> 8) & 0xffff)) / 0xffff * 0.2;
+        }
 	
 	
 	public long getDeepOcean(ChunkTile tile, int temp, int iceNoise) {
