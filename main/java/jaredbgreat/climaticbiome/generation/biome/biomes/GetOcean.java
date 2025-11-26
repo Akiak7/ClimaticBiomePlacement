@@ -148,24 +148,11 @@ public class GetOcean implements IBiomeSpecifier {
 
         private double islandProbability(ChunkTile tile, int seed) {
                 double baseNoise = ((double)tile.getNoise()) / 9.0;
-                double coarseNoise = coarseNoise(tile);
-                double blendedNoise = (baseNoise * 0.55) + (coarseNoise * 0.45);
                 double shoreline = shorelineBlend(tile);
                 double heightBias = Math.min(1.0, Math.max(0.0, (tile.getHeight() + 0.2) * 1.8));
-                double raw = (blendedNoise * 0.7) + (heightBias * 0.3);
+                double raw = (baseNoise * 0.7) + (heightBias * 0.3);
                 double jitter = ((double)(seed & 0xffff)) / 0xffff;
                 return Math.max(0.0, Math.min(1.0, (raw * 0.85) + (jitter * 0.15 * shoreline)));
-        }
-
-        private double coarseNoise(ChunkTile tile) {
-                int coarseX = tile.getTX() >> 1;
-                int coarseZ = tile.getTZ() >> 1;
-                int hash = coarseX * 734287 + coarseZ * 912931 + 0x9e3779b9;
-                hash ^= (hash << 13);
-                hash ^= (hash >> 17);
-                hash ^= (hash << 5);
-                int value = Math.abs(hash % 10);
-                return ((double)value) / 9.0;
         }
 
         private double shorelineBlend(ChunkTile tile) {
