@@ -15,7 +15,6 @@ import jaredbgreat.climaticbiome.compat.userdef.VariantParser;
 import jaredbgreat.climaticbiome.configuration.ConfigHandler;
 import jaredbgreat.climaticbiome.generation.ClimaticRealisticWorldType;
 import jaredbgreat.climaticbiome.generation.ClimaticWorldType;
-import jaredbgreat.climaticbiome.generation.mutators.SpecialGenHandler;
 import jaredbgreat.climaticbiome.proxy.IProxy;
 import jaredbgreat.climaticbiome.util.BlockRegistrar;
 import jaredbgreat.climaticbiome.util.Externalizer;
@@ -38,10 +37,8 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 @Mod(modid=Info.ID, name=Info.NAME, version=Info.VERSION,
 acceptableRemoteVersions=Info.VERSION, dependencies=Info.DEPSTR)
 public class ClimaticBiomes {
-	private static SpecialGenHandler specialGen;
-	
-	@Instance
-	public static ClimaticBiomes instance;
+        @Instance
+        public static ClimaticBiomes instance;
 	public static ClimaticWorldType climaticWorldType;
 	public static ClimaticRealisticWorldType realisticWorldType;
 	public ConfigHandler configHandler;
@@ -75,11 +72,11 @@ public class ClimaticBiomes {
 
 
     @EventHandler
-    public void init(FMLInitializationEvent event) {    	
-    	proxy.init();
-    	specialGen = new SpecialGenHandler();
-    	ItemRegistrar.addRecipes();
-    	makeFiles();    	
+    public void init(FMLInitializationEvent event) {
+        proxy.init();
+        // Special generation handler left unregistered until it is implemented.
+        ItemRegistrar.addRecipes();
+        makeFiles();
     }
 
 
