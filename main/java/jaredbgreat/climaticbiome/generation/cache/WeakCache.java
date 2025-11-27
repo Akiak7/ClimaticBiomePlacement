@@ -1,5 +1,6 @@
 package jaredbgreat.climaticbiome.generation.cache;
 
+import java.lang.ref.ReferenceQueue;
 
 /**
  * A cache system using weak reference to automatically have its contents 
@@ -17,6 +18,8 @@ public class WeakCache <T extends IHaveCoords> {
     private int lowLimit;
     private int length;
     private boolean altered;
+    private final Object lock = new Object();
+    private final ReferenceQueue<T> queue;
     
     
     /**
@@ -29,6 +32,7 @@ public class WeakCache <T extends IHaveCoords> {
         lowLimit = ((size - minSize) * 3) / 16;
         length = 0;
         altered = false;
+        queue = new ReferenceQueue<>();
     }
     
     
@@ -42,6 +46,7 @@ public class WeakCache <T extends IHaveCoords> {
         lowLimit = 0;
         length = 0;
         altered = false;
+        queue = new ReferenceQueue<>();
     }
     
     
@@ -51,20 +56,23 @@ public class WeakCache <T extends IHaveCoords> {
      * @param item the object to be added.
      */
     public void add(T item) {
-        int bucket = (item.getCoords().hashCode() & 0x7fffffff) % data.length;
-        int offset = 0;
-        while(offset < data.length) {
-            int slot = (bucket + offset) % data.length;
-            if(data[slot] == null || data[slot].get() == null) {
-                data[slot] = new CacheReference(item, this);
-                if(++length > capacity) {
-                    grow();
+        synchronized(lock) {
+            processQueueLocked();
+            int bucket = (item.getCoords().hashCode() & 0x7fffffff) % data.length;
+            int offset = 0;
+            while(offset < data.length) {
+                int slot = (bucket + offset) % data.length;
+                if(data[slot] == null || data[slot].get() == null) {
+                    data[slot] = new CacheReference(item, queue);
+                    if(++length > capacity) {
+                        growLocked();
+                    }
+                    return;
+                } else if(data[slot].get().equals(item)) {
+                    return;
+                }else {
+                    offset++;
                 }
-                return;
-            } else if(data[slot].get().equals(item)) {
-                return;
-            }else {
-                offset++;
             }
         }
     }
@@ -76,22 +84,25 @@ public class WeakCache <T extends IHaveCoords> {
      * @return the object stored for those coordinates, or null.
      */
     public T get(Coords coords) {
-    	if(altered) {
-    		rebucketAll();
-    	}
-        int bucket = (coords.hashCode() & 0x7fffffff) % data.length;
-        int offset = 0;
-        while(offset < data.length) {
-            int slot = (bucket + offset) % data.length;
-            if(data[slot] == null || data[slot].get() == null) {
-                return null;
-            } else if(data[slot].get().getCoords().equals(coords)) {
-                return (T)data[slot].get();
-            } else {
-                offset++;
+        synchronized(lock) {
+            processQueueLocked();
+            if(altered) {
+                    rebucketAllLocked();
             }
-        }        
-        return null;
+            int bucket = (coords.hashCode() & 0x7fffffff) % data.length;
+            int offset = 0;
+            while(offset < data.length) {
+                int slot = (bucket + offset) % data.length;
+                if(data[slot] == null || data[slot].get() == null) {
+                    return null;
+                } else if(data[slot].get().getCoords().equals(coords)) {
+                    return (T)data[slot].get();
+                } else {
+                    offset++;
+                }
+            }
+            return null;
+        }
     }
     
     
@@ -101,22 +112,25 @@ public class WeakCache <T extends IHaveCoords> {
      * @return the object stored for those coordinates, or null.
      */
     public T get(MutableCoords coords) {
-    	if(altered) {
-    		rebucketAll();
-    	}
-        int bucket = (coords.hashCode() & 0x7fffffff) % data.length;
-        int offset = 0;
-        while(offset < data.length) {
-            int slot = (bucket + offset) % data.length;
-            if(data[slot] == null || data[slot].get() == null) {
-                return null;
-            } else if(data[slot].get().getCoords().equals(coords)) {
-                return (T)data[slot].get();
-            } else {
-                offset++;
+        synchronized(lock) {
+            processQueueLocked();
+            if(altered) {
+                    rebucketAllLocked();
             }
-        }        
-        return null;
+            int bucket = (coords.hashCode() & 0x7fffffff) % data.length;
+            int offset = 0;
+            while(offset < data.length) {
+                int slot = (bucket + offset) % data.length;
+                if(data[slot] == null || data[slot].get() == null) {
+                    return null;
+                } else if(data[slot].get().getCoords().equals(coords)) {
+                    return (T)data[slot].get();
+                } else {
+                    offset++;
+                }
+            }
+            return null;
+        }
     }
     
     
@@ -128,22 +142,25 @@ public class WeakCache <T extends IHaveCoords> {
      * @return the object stored for those coordinates, or null.
      */
     public T get(int x, int z) {
-    	if(altered) {
-    		rebucketAll();
-    	}
-        int bucket = (Coords.hashCoords(x, z) & 0x7fffffff) % data.length;
-        int offset = 0;
-        while(offset < data.length) {
-            int slot = (bucket + offset) % data.length;
-            if(data[slot] == null || data[slot].get() == null) {
-                return null;
-            } else if(data[slot].get().getCoords().equals(x, z)) {
-                return (T)data[slot].get();
-            } else {
-                offset++;
+        synchronized(lock) {
+            processQueueLocked();
+            if(altered) {
+                    rebucketAllLocked();
             }
-        }        
-        return null;
+            int bucket = (Coords.hashCoords(x, z) & 0x7fffffff) % data.length;
+            int offset = 0;
+            while(offset < data.length) {
+                int slot = (bucket + offset) % data.length;
+                if(data[slot] == null || data[slot].get() == null) {
+                    return null;
+                } else if(data[slot].get().getCoords().equals(x, z)) {
+                    return (T)data[slot].get();
+                } else {
+                    offset++;
+                }
+            }
+            return null;
+        }
     }
     
     
@@ -154,22 +171,25 @@ public class WeakCache <T extends IHaveCoords> {
      * @return 
      */
     public boolean contains(Coords coords) {
-    	if(altered) {
-    		rebucketAll();
-    	}
-        int bucket = (coords.hashCode() & 0x7fffffff) % data.length;
-        int offset = 0;
-        while(offset < data.length) {
-            int slot = (bucket + offset) % data.length;
-            if(data[slot] == null || data[slot].get() == null) {
-                return false;
-            } else if(data[slot].get().getCoords().equals(coords)) {
-                return true;
-            } else {
-                offset++;
+        synchronized(lock) {
+            processQueueLocked();
+            if(altered) {
+                    rebucketAllLocked();
             }
-        }        
-        return false;
+            int bucket = (coords.hashCode() & 0x7fffffff) % data.length;
+            int offset = 0;
+            while(offset < data.length) {
+                int slot = (bucket + offset) % data.length;
+                if(data[slot] == null || data[slot].get() == null) {
+                    return false;
+                } else if(data[slot].get().getCoords().equals(coords)) {
+                    return true;
+                } else {
+                    offset++;
+                }
+            }
+            return false;
+        }
     }
     
     
@@ -181,22 +201,25 @@ public class WeakCache <T extends IHaveCoords> {
      * @return 
      */
     public boolean contains(int x, int z) {
-    	if(altered) {
-    		rebucketAll();
-    	}
-        int bucket = (Coords.hashCoords(x, z) & 0x7fffffff) % data.length;
-        int offset = 0;
-        while(offset < data.length) {
-            int slot = (bucket + offset) % data.length;
-            if(data[slot] == null || data[slot].get() == null) {
-                return false;
-            } else if(data[slot].get().getCoords().equals(x, z)) {
-                return true;
-            } else {
-                offset++;
+        synchronized(lock) {
+            processQueueLocked();
+            if(altered) {
+                    rebucketAllLocked();
             }
-        }        
-        return false;
+            int bucket = (Coords.hashCoords(x, z) & 0x7fffffff) % data.length;
+            int offset = 0;
+            while(offset < data.length) {
+                int slot = (bucket + offset) % data.length;
+                if(data[slot] == null || data[slot].get() == null) {
+                    return false;
+                } else if(data[slot].get().getCoords().equals(x, z)) {
+                    return true;
+                } else {
+                    offset++;
+                }
+            }
+            return false;
+        }
     }
     
     
@@ -207,31 +230,34 @@ public class WeakCache <T extends IHaveCoords> {
      * @return 
      */
     public boolean contains(T in) {
-    	if(altered) {
-    		rebucketAll();
-    	}
-        Coords coords = in.getCoords();
-        int bucket = (coords.hashCode() & 0x7fffffff) % data.length;
-        int offset = 0;
-        while(offset <= data.length) {
-            int slot = (bucket + offset) % data.length;
-            if(data[slot] == null || data[slot].get() == null) {
-                return false;
-            } else if(data[slot].get().getCoords().equals(coords)) {
-                return true;
-            } else {
-                offset++;
+        synchronized(lock) {
+            processQueueLocked();
+            if(altered) {
+                    rebucketAllLocked();
             }
-        }        
-        return false;
+            Coords coords = in.getCoords();
+            int bucket = (coords.hashCode() & 0x7fffffff) % data.length;
+            int offset = 0;
+            while(offset <= data.length) {
+                int slot = (bucket + offset) % data.length;
+                if(data[slot] == null || data[slot].get() == null) {
+                    return false;
+                } else if(data[slot].get().getCoords().equals(coords)) {
+                    return true;
+                } else {
+                    offset++;
+                }
+            }
+            return false;
+        }
     }
     
     
     /**
      * This will grow the data size when needed.
      */
-    private void grow() {
-    	CacheReference<T>[] old = data;
+    private void growLocked() {
+        CacheReference<T>[] old = data;
         data = new CacheReference[(old.length * 3) / 2];
         for(int i = 0; i < old.length; i++) {
             if(old[i] != null && old[i].get() != null) {
@@ -247,8 +273,8 @@ public class WeakCache <T extends IHaveCoords> {
     /**
      * This will shrink the data size when needed.
      */
-    private void shrink() {
-    	CacheReference<T>[] old = data;
+    private void shrinkLocked() {
+        CacheReference<T>[] old = data;
         data = new CacheReference[Math.max(old.length / 2, minSize)];
         for(int i = 0; i < old.length; i++) {
             if(old[i] != null && old[i].get() != null) {
@@ -261,17 +287,17 @@ public class WeakCache <T extends IHaveCoords> {
     }
     
     
-    private void rebucketAll() {
+    private void rebucketAllLocked() {
         if(length < lowLimit) {
-            shrink();
+            shrinkLocked();
         } else {
-	    	CacheReference<T>[] old = data;
-	        data = new CacheReference[old.length];
-	        for(int i = 0; i < old.length; i++) {
-	            if(old[i] != null && old[i].get() != null) {
-	                rebucket(old[i].get());
-	            }
-	        }
+                CacheReference<T>[] old = data;
+                data = new CacheReference[old.length];
+                for(int i = 0; i < old.length; i++) {
+                    if(old[i] != null && old[i].get() != null) {
+                        rebucket(old[i].get());
+                    }
+                }
         }
         altered  = false;
     }
@@ -282,9 +308,9 @@ public class WeakCache <T extends IHaveCoords> {
         int offset = 0;
         while(offset <= data.length) {
             int slot = (bucket + offset) % data.length;
-            if((data[slot] == null) || 
-            		(data[slot].get() != null && (data[slot].get().equals(item)))) {
-                data[slot] = new CacheReference(item, this);
+            if((data[slot] == null) ||
+                        (data[slot].get() != null && (data[slot].get().equals(item)))) {
+                data[slot] = new CacheReference(item, queue);
                 return;
             }else {
                 offset++;
@@ -296,8 +322,20 @@ public class WeakCache <T extends IHaveCoords> {
     /**
      * This will decrement the size by one and shrink the backing array if needed. 
      */
-    public void reduce() {
-    	length--;
-    	altered = true;
-    } 
+    @SuppressWarnings("unchecked")
+    private void processQueueLocked() {
+        CacheReference<? extends T> reference;
+        int removed = 0;
+        while((reference = (CacheReference<? extends T>) queue.poll()) != null) {
+            removed++;
+        }
+        if(removed > 0) {
+            length = Math.max(0, length - removed);
+            if(length < lowLimit) {
+                shrinkLocked();
+            } else {
+                altered = true;
+            }
+        }
+    }
 }
