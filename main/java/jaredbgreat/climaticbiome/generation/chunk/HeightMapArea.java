@@ -77,23 +77,23 @@ public class HeightMapArea extends AbstractWeaklyCacheable {
 	 * a 2D array (or the range if nothing else).
 	 * 
 	 * @param in
-	 * @param name
-	 */
-	public static void statArray(float[][] in, String name) {
-		float min = Float.NEGATIVE_INFINITY;
-		float max = Float.POSITIVE_INFINITY;
-		float sum = 0;
-		float avg = 0;
-		float std = 0;
-		int   num = 0;
-		float tmp;
-		for(int i = 0; i < in.length; i++)
-			for(int j = 0; j < in[i].length; j++) {
-				num++;
-				if(in[i][j] > min) min = in[i][j];
-				if(in[i][j] < max) max = in[i][j];
-				sum += in[i][j];
-			}
+        * @param name
+         */
+        public static void statArray(float[][] in, String name) {
+                float min = Float.POSITIVE_INFINITY;
+                float max = Float.NEGATIVE_INFINITY;
+                float sum = 0;
+                float avg = 0;
+                float std = 0;
+                int   num = 0;
+                float tmp;
+                for(int i = 0; i < in.length; i++)
+                        for(int j = 0; j < in[i].length; j++) {
+                                num++;
+                                if(in[i][j] < min) min = in[i][j];
+                                if(in[i][j] > max) max = in[i][j];
+                                sum += in[i][j];
+                        }
 		avg = sum / num;
 		for(int i = 0; i < in.length; i++)
 			for(int j = 0; j < in[i].length; j++) {
@@ -126,23 +126,23 @@ public class HeightMapArea extends AbstractWeaklyCacheable {
 	 * a 2D array (or the range if nothing else).
 	 * 
 	 * @param in
-	 * @param name
-	 */
-	public static void statArray(double[][] in, String name) {
-		double min = Double.NEGATIVE_INFINITY;
-		double max = Double.POSITIVE_INFINITY;
-		float sum = 0;
-		float avg = 0;
-		float std = 0;
-		int   num = 0;
-		double tmp;
-		for(int i = 0; i < in.length; i++)
-			for(int j = 0; j < in[i].length; j++) {
-				num++;
-				if(in[i][j] > min) min = in[i][j];
-				if(in[i][j] < max) max = in[i][j];
-				sum += in[i][j];
-			}
+        * @param name
+         */
+        public static void statArray(double[][] in, String name) {
+                double min = Double.POSITIVE_INFINITY;
+                double max = Double.NEGATIVE_INFINITY;
+                float sum = 0;
+                float avg = 0;
+                float std = 0;
+                int   num = 0;
+                double tmp;
+                for(int i = 0; i < in.length; i++)
+                        for(int j = 0; j < in[i].length; j++) {
+                                num++;
+                                if(in[i][j] < min) min = in[i][j];
+                                if(in[i][j] > max) max = in[i][j];
+                                sum += in[i][j];
+                        }
 		avg = sum / num;
 		for(int i = 0; i < in.length; i++)
 			for(int j = 0; j < in[i].length; j++) {
