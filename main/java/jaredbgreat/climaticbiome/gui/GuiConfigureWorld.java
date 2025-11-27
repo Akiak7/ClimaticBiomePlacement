@@ -35,6 +35,7 @@ implements GuiSlider.FormatHelper, GuiPageButtonList.GuiResponder {
     private GuiCBToggleButton deepSandButton;
     private GuiCBToggleButton volcanicIslandsButton;
     private GuiCBToggleButton hasRiversButton;
+    private GuiCBToggleButton hasCoastsButton;
     private GuiCBToggleButton bigMountainsButton;
     
     boolean vanilla;
@@ -103,18 +104,18 @@ implements GuiSlider.FormatHelper, GuiPageButtonList.GuiResponder {
         buttonList.add(deepSandButton = new GuiCBToggleButton(72, width - 190, 140,  
         		"createWorld." + Info.ID + ".deepsand", settings.deepSand, 
         		new ClimaticWorldSettings.DeepSandSetter(settings)));  
-        buttonList.add(volcanicIslandsButton = new GuiCBToggleButton(73, 40, 165,  
-        		"createWorld." + Info.ID + ".volcanicislses", settings.volcanicIslands, 
-        		new ClimaticWorldSettings.VolcanicIslandsSetter(settings)));   
-        buttonList.add(hasRiversButton = new GuiCBToggleButton(74, width - 190, 165,  
-        		"createWorld." + Info.ID + ".hasrivers", settings.hasRivers, 
-        		new ClimaticWorldSettings.HasRiversSetter(settings)));    		  
-        buttonList.add(bigMountainsButton = new GuiCBToggleButton(75, 40, 190,  
-        		"createWorld." + Info.ID + ".bigmountains", settings.bigMountains, 
-        		new ClimaticWorldSettings.HasBigMountains(settings)));     
-        buttonList.add(hasRiversButton = new GuiCBToggleButton(74, width - 190, 190,  
-        		"createWorld." + Info.ID + ".hascoasts", settings.hasRivers, 
-        		new ClimaticWorldSettings.HasCoastsSetter(settings)));    		
+        buttonList.add(volcanicIslandsButton = new GuiCBToggleButton(73, 40, 165,
+                        "createWorld." + Info.ID + ".volcanicislses", settings.volcanicIslands,
+                        new ClimaticWorldSettings.VolcanicIslandsSetter(settings)));
+        buttonList.add(hasRiversButton = new GuiCBToggleButton(74, width - 190, 165,
+                        "createWorld." + Info.ID + ".hasrivers", settings.hasRivers,
+                        new ClimaticWorldSettings.HasRiversSetter(settings)));
+        buttonList.add(bigMountainsButton = new GuiCBToggleButton(75, 40, 190,
+                        "createWorld." + Info.ID + ".bigmountains", settings.bigMountains,
+                        new ClimaticWorldSettings.HasBigMountains(settings)));
+        buttonList.add(hasCoastsButton = new GuiCBToggleButton(76, width - 190, 190,
+                        "createWorld." + Info.ID + ".hascoasts", settings.hasCoasts,
+                        new ClimaticWorldSettings.HasCoastsSetter(settings)));
 		
 	}
 	
@@ -162,11 +163,12 @@ implements GuiSlider.FormatHelper, GuiPageButtonList.GuiResponder {
 	    addIslandsButton.setValue(settings.addIslands, settings);
 	    extraBeachButton.setValue(settings.extraBeaches, settings);
 	    rockyScrubButton.setValue(settings.rockyScrub, settings);
-	    deepSandButton.setValue(settings.deepSand, settings);
-	    volcanicIslandsButton.setValue(settings.volcanicIslands, settings);
-	    hasRiversButton.setValue(settings.hasRivers, settings);
-	    bigMountainsButton.setValue(settings.bigMountains, settings);
-	}
+            deepSandButton.setValue(settings.deepSand, settings);
+            volcanicIslandsButton.setValue(settings.volcanicIslands, settings);
+            hasRiversButton.setValue(settings.hasRivers, settings);
+            hasCoastsButton.setValue(settings.hasCoasts, settings);
+            bigMountainsButton.setValue(settings.bigMountains, settings);
+        }
 	
 
 	@Override
