@@ -1,4 +1,4 @@
-This folder contains subfolders for every biome mod that you may have installed. The 'Minecraft' folder is for vanilla biomes.
+This folder contains subfolders for every biome mod that you may have installed. The 'Minecraft' folder is for vanilla biomes. The 'custom' folder is for any additional biome mods. The 'special' folder is for biomes from non-biome mods.
 
 Inside each folder, you will find config files for the different biome categories. Open each file, and add, edit, or remove entries as you please.
 
@@ -18,7 +18,7 @@ Same as biome(id), but forces the tile's terrain type to "normal", ignoring any 
 
 - island(id)
 
-Can be used in ocean biome tables to create biome islands when noise surpasses an internal threshold.
+Can be used in ocean biome tables to create biome islands when noise surpasses an internal threshold. For island biomes it is usually preferred to just use biome(id).
 
 - noise(firstId, threshold, secondId)
 
