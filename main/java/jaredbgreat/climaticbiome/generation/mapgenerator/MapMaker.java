@@ -429,11 +429,11 @@ public class MapMaker {
     private int refineBasicCell(int[][] noise, int x, int y) {
         int sum = 0;
         // Yes, I include the cell itself -- its simpler and works for me
-        for(int i = x - 1; i <= x + 1; i++) 
+        for(int i = x - 1; i <= x + 1; i++)
             for(int j = y - 1; j <= y + 1; j++) {
                 sum += noise[i][j];
             }
-        return sum / 5;
+        return sum / 9;
     }
     
     
