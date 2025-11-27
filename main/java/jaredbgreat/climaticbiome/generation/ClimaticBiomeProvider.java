@@ -121,13 +121,16 @@ public class ClimaticBiomeProvider extends BiomeProvider {
         if((in == null) || (in.length < (width * depth))) {
             in = new Biome[width * depth];
         }
-        // FIXME?? This should probably check more strictly if its an exact whole chunk...?
-        if(in.length == 256) {
+        if(isExactChunkRequest(x, z, width, depth)) {
                 finder.getChunkBiomeGrid(x / 16, z / 16, in);
         } else {
                 finder.getUnalignedBiomeGrid(x, z, width, depth, in);
         }
         return in;
+    }
+
+    private boolean isExactChunkRequest(int x, int z, int width, int depth) {
+        return (width == 16) && (depth == 16) && ((x & 15) == 0) && ((z & 15) == 0);
     }
     
     
