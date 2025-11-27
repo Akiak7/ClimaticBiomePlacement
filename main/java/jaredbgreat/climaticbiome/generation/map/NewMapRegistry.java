@@ -182,7 +182,7 @@ public class NewMapRegistry extends AbstractMapRegistry implements IMapRegistry 
                 }
                 if(!loadedTerrain) {
                         for(int i = 0; i < dataSize; i++) {
-                                data[i] &= 0xffffffffL;
+                                data[i] &= 0xffffffffffL;
                         }
                         TerrainPrimer.makeFromVanilla(data);
                         writeTerrainData(data, x, z);
