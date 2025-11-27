@@ -49,8 +49,9 @@ public class ConfigHandler {
         public static boolean includeVolcano = true;
 
         public static float swampBeachBlock = 0.0f;
-	
-	public static boolean biomeWater = false;
+        public static double landThreshold = 0.6d;
+
+        public static boolean biomeWater = false;
 	
 	public static final String BASALT_BLOCK = Info.ID + ":basalt";
 	public static final String ASH_BLOCK = Info.ID + ":volcanic_ash";
@@ -312,8 +313,8 @@ public class ConfigHandler {
 		includeMountains = config.getBoolean("MountainVariants", "Biomes", true, 
 						"If true there will be climate specific mountains \n"
 						+ "and montane forests.");
-		includePlains   = config.getBoolean("PlainsVariants", "Biomes", true, 
-						"If true there will be temperature specific plains.");
+                includePlains   = config.getBoolean("PlainsVariants", "Biomes", true,
+                                                "If true there will be temperature specific plains.");
                 includeSwamps   = config.getBoolean("SwampVariants", "Biomes", true,
                                                 "If true there will be temperature specific wetlands.");
                 includeVolcano  = config.getBoolean("Volcanoes", "Biomes", true,
@@ -322,6 +323,8 @@ public class ConfigHandler {
 
                 swampBeachBlock = config.getFloat("SwampBeachBlock", "Biomes", 0.0f, 0.0f, 1.0f,
                                                 "How much swamps should be blocked from overwriting beaches (0 to 1).");
+                landThreshold = config.getFloat("LandHeightThreshold", "Biomes", 0.6f, 0.0f, 2.0f,
+                                                "Minimum height needed to count as land; raise to suppress tiny islands.");
 		
 		
 		config.save();	// Saving it all

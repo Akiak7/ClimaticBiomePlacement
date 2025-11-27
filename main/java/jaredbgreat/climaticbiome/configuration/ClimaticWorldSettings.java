@@ -26,10 +26,11 @@ public class ClimaticWorldSettings {
 	public boolean rockyScrub;
 	public boolean deepSand;
 	public boolean volcanicIslands;
-	public boolean hasRivers;
-	public boolean hasCoasts;
-	
-	public boolean bigMountains;
+        public boolean hasRivers;
+        public boolean hasCoasts;
+
+        public boolean bigMountains;
+        public double landThreshold;
 	
 	public int biomeSize;
 	public SizeScale regionSize;
@@ -60,9 +61,10 @@ public class ClimaticWorldSettings {
 		this.forceWhole = ConfigHandler.forceWhole;	
 		this.biomeSize = ConfigHandler.biomeSize;
 		this.regionSize = ConfigHandler.regionSize;		
-		this.mode = ConfigHandler.mode;	
-		this.sisize = ConfigHandler.sisize;
-		this.bigMountains = ConfigHandler.bigMountains;
+                this.mode = ConfigHandler.mode;
+                this.sisize = ConfigHandler.sisize;
+                this.bigMountains = ConfigHandler.bigMountains;
+                this.landThreshold = ConfigHandler.landThreshold;
 	}
 	
 	
@@ -113,17 +115,20 @@ public class ClimaticWorldSettings {
 			if(JsonUtils.hasField(jsonObj, "regionSize")) 		
 				regionSize = SizeScale.get(JsonUtils.getInt(jsonObj, "regionSize"));
 			
-			if(JsonUtils.hasField(jsonObj, "mapType")) 		
-				mode = JsonUtils.getInt(jsonObj, "mapType");
-			
-			if(JsonUtils.hasField(jsonObj, "SurvivalIslandSize")) 		
-				sisize = JsonUtils.getFloat(jsonObj, "SurvivalIslandSize");
-			
-			if(JsonUtils.hasField(jsonObj, "BigMountains")) 		
-				bigMountains = JsonUtils.getBoolean(jsonObj, "BigMountains");
-		}		
-		return this;
-	}
+                        if(JsonUtils.hasField(jsonObj, "mapType"))
+                                mode = JsonUtils.getInt(jsonObj, "mapType");
+
+                        if(JsonUtils.hasField(jsonObj, "SurvivalIslandSize"))
+                                sisize = JsonUtils.getFloat(jsonObj, "SurvivalIslandSize");
+
+                        if(JsonUtils.hasField(jsonObj, "BigMountains"))
+                                bigMountains = JsonUtils.getBoolean(jsonObj, "BigMountains");
+
+                        if(JsonUtils.hasField(jsonObj, "landThreshold"))
+                                landThreshold = JsonUtils.getFloat(jsonObj, "landThreshold");
+                }
+                return this;
+        }
 	
 	
 	/**
@@ -156,12 +161,13 @@ public class ClimaticWorldSettings {
 		jsonObj.addProperty("hasCoasts", hasCoasts);	
 		jsonObj.addProperty("forceWholeBiome", forceWhole);
 		jsonObj.addProperty("biomeSize", biomeSize);
-		jsonObj.addProperty("regionSize", regionSize.ordinal() + 1);
-		jsonObj.addProperty("mapType", mode);
-		jsonObj.addProperty("SurvivalIslandSize", sisize);
-		jsonObj.addProperty("BigMountains", bigMountains);		
-		return jsonObj;
-	}
+                jsonObj.addProperty("regionSize", regionSize.ordinal() + 1);
+                jsonObj.addProperty("mapType", mode);
+                jsonObj.addProperty("SurvivalIslandSize", sisize);
+                jsonObj.addProperty("BigMountains", bigMountains);
+                jsonObj.addProperty("landThreshold", landThreshold);
+                return jsonObj;
+        }
 	
 	
 	/**

@@ -1,7 +1,6 @@
 package jaredbgreat.climaticbiome.generation.mapgenerator;
 
 import jaredbgreat.climaticbiome.configuration.ClimaticWorldSettings;
-import jaredbgreat.climaticbiome.configuration.ConfigHandler;
 import jaredbgreat.climaticbiome.util.NoiseMap2D;
 import jaredbgreat.climaticbiome.util.SpatialHash;
 
@@ -38,10 +37,10 @@ public class SurvivalIslandMaker extends LandmassMaker {
         
         for(int i = 0; i < size; i++)
             for(int j = 0; j < size; j++) {
-                if(out[(i * size) + j].height > 0.6) {
+                if(out[(i * size) + j].height > settings.landThreshold) {
                     out[(i * size) + j].rlBiome = 1;
-                    if(settings.extraBeaches || 
-                    		out[(i * size) + j].height < beachThreshold) {
+                    if(settings.extraBeaches ||
+                                out[(i * size) + j].height < beachThreshold) {
                         out[(i * size) + j].beach = true;
                     }
                 } else {
