@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.function.Predicate;
 
 public class BiomeList implements IBiomeSpecifier {
         private final List<IBiomeSpecifier> list;
@@ -109,9 +110,21 @@ public class BiomeList implements IBiomeSpecifier {
         }
 
 
-        public boolean isEmpty() {
-                return list.isEmpty();
-        }
+    public boolean isEmpty() {
+            return list.isEmpty();
+    }
+
+
+    public BiomeList filteredCopy(Predicate<IBiomeSpecifier> predicate) {
+            BiomeList filtered = new BiomeList();
+            for(int i = 0; i < list.size(); i++) {
+                    IBiomeSpecifier entry = list.get(i);
+                    if(predicate.test(entry)) {
+                            filtered.addItem(entry, weights.get(i));
+                    }
+            }
+            return filtered;
+    }
 
 
         public int size() {

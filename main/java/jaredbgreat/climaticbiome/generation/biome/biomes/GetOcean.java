@@ -7,7 +7,9 @@ import jaredbgreat.climaticbiome.configuration.ConfigHandler;
 import jaredbgreat.climaticbiome.generation.biome.BiomeClimateTable;
 import jaredbgreat.climaticbiome.generation.biome.BiomeList;
 import jaredbgreat.climaticbiome.generation.biome.IBiomeSpecifier;
+import jaredbgreat.climaticbiome.generation.biome.IslandBiome;
 import jaredbgreat.climaticbiome.generation.biome.LeafBiome;
+import jaredbgreat.climaticbiome.generation.biome.WeightedBiomeSpecifier;
 import jaredbgreat.climaticbiome.generation.mapgenerator.ChunkTile;
 
 
@@ -25,11 +27,16 @@ public class GetOcean implements IBiomeSpecifier {
 	BiomeList frozen;
 	BiomeList cold;
 	BiomeList cool;
-	BiomeList warm;
-	BiomeList hot;
-	BiomeList dfrozen;
-	BiomeList dcold;
-	BiomeList dcool;
+        BiomeList warm;
+        BiomeList hot;
+        BiomeList frozenNoIslands;
+        BiomeList coldNoIslands;
+        BiomeList coolNoIslands;
+        BiomeList warmNoIslands;
+        BiomeList hotNoIslands;
+        BiomeList dfrozen;
+        BiomeList dcold;
+        BiomeList dcool;
 	BiomeList dwarm;
 	BiomeList dhot;
 	IBiomeSpecifier islands1; // Main land biomes
@@ -94,12 +101,13 @@ public class GetOcean implements IBiomeSpecifier {
 		if(frozen.isEmpty()) {
 			frozen.addItem(new LeafBiome(10));
 		}
-		if(dfrozen.isEmpty()) {
-			dfrozen.addItem(new LeafBiome(10));
-		}
-		// MUST BE LAST, ALWAYS!!!
-		fixOceans();
-	}	
+                if(dfrozen.isEmpty()) {
+                        dfrozen.addItem(new LeafBiome(10));
+                }
+                // MUST BE LAST, ALWAYS!!!
+                fixOceans();
+                buildIslandSafeShallows();
+        }
 
 	
 	@Override
@@ -164,11 +172,11 @@ public class GetOcean implements IBiomeSpecifier {
 	}
 	
 	
-	public long getShallowOcean(ChunkTile tile, int temp, int iceNoise) {
+        public long getShallowOcean(ChunkTile tile, int temp, int iceNoise) {
         if(((iceNoise / 2) - temp) > -1) {
-        	return frozen.getBiome(tile);
+                return frozen.getBiome(tile);
         }
-    	if(temp < 7) {
+        if(temp < 7) {
     		return cold.getBiome(tile);
     	} 
     	if(temp < 13) {
@@ -177,8 +185,25 @@ public class GetOcean implements IBiomeSpecifier {
     	if(temp < 19) {
     		return warm.getBiome(tile);
     	}
-    	return hot.getBiome(tile);
-	}
+        return hot.getBiome(tile);
+        }
+
+
+        public long getIslandSafeShallowOcean(ChunkTile tile, int temp, int iceNoise) {
+        if(((iceNoise / 2) - temp) > -1) {
+                return frozenNoIslands.getBiome(tile);
+        }
+        if(temp < 7) {
+                return coldNoIslands.getBiome(tile);
+        }
+        if(temp < 13) {
+                return coolNoIslands.getBiome(tile);
+        }
+        if(temp < 19) {
+                return warmNoIslands.getBiome(tile);
+        }
+        return hotNoIslands.getBiome(tile);
+        }
 	
 	
 	public static GetOcean getOcean(ClimaticWorldSettings settings) {
@@ -201,11 +226,11 @@ public class GetOcean implements IBiomeSpecifier {
 	 * add temperature specific oceans, while 
 	 * not relying on them.
 	 */
-	private void fixOceans() {
-		if(warm.isEmpty()) {
-			warm = cool;
-		}
-		if(hot.isEmpty()) {
+        private void fixOceans() {
+                if(warm.isEmpty()) {
+                        warm = cool;
+                }
+                if(hot.isEmpty()) {
 			hot = warm;
 		}
 		if(cold.isEmpty()) {
@@ -229,10 +254,37 @@ public class GetOcean implements IBiomeSpecifier {
 			dcold = dcool;
 		}
 		if(dfrozen.isEmpty()) {
-			// Should never be true, but just in case.
-			dfrozen = dcold; 
-		}
-	}
+                        // Should never be true, but just in case.
+                        dfrozen = dcold;
+                }
+        }
+
+
+        private void buildIslandSafeShallows() {
+                frozenNoIslands = createIslandSafeList(frozen);
+                coldNoIslands = createIslandSafeList(cold);
+                coolNoIslands = createIslandSafeList(cool);
+                warmNoIslands = createIslandSafeList(warm);
+                hotNoIslands = createIslandSafeList(hot);
+        }
+
+
+        private BiomeList createIslandSafeList(BiomeList source) {
+                BiomeList filtered = source.filteredCopy(this::isNotIslandSpecifier);
+                if(filtered.isEmpty()) {
+                        filtered.addItem(new LeafBiome(0));
+                }
+                return filtered;
+        }
+
+
+        private boolean isNotIslandSpecifier(IBiomeSpecifier specifier) {
+                IBiomeSpecifier current = specifier;
+                while(current instanceof WeightedBiomeSpecifier) {
+                        current = ((WeightedBiomeSpecifier)current).getDelegate();
+                }
+                return !(current instanceof IslandBiome);
+        }
 	
 	/**
 	 * This will get the oceans surrounding islands.
@@ -240,11 +292,11 @@ public class GetOcean implements IBiomeSpecifier {
 	 * @param tile
 	 * @return
 	 */
-	public long getForIsland(ChunkTile tile) {
-		//tile.nextBiomeSeed();
-		return getShallowOcean(tile, tile.getTemp(), tile.getNoise());
-		//return coasts;
-	}
+        public long getForIsland(ChunkTile tile) {
+                //tile.nextBiomeSeed();
+                return getIslandSafeShallowOcean(tile, tile.getTemp(), tile.getNoise());
+                //return coasts;
+        }
 	
 	
 	private boolean notNearEdge(ChunkTile tile) {
