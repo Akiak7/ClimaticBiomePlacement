@@ -8,14 +8,18 @@ import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+// import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class SpecialGenHandler implements IWorldGenerator  {
-	
-	
-	public SpecialGenHandler() {
-		GameRegistry.registerWorldGenerator(this, 100);
-	}
+
+
+        public SpecialGenHandler() {
+                // This registration is temporarily disabled until the stored seed data
+                // required by reallyGenerate() is available. Leaving it enabled would cause
+                // unnecessary per-chunk callbacks during world generation. Once the special
+                // generation feature is ready, re-enable the line below.
+                // GameRegistry.registerWorldGenerator(this, 100);
+        }
 
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, 
