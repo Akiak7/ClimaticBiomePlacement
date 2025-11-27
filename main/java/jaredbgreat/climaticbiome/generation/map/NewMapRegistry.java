@@ -161,26 +161,33 @@ public class NewMapRegistry extends AbstractMapRegistry implements IMapRegistry 
 	}
 	
 	
-	private void readTerrainData(long[] data, int x, int z) {
-		File file = getSaveTerrain(x, z);
-		if(file != null && file.exists()) {
-			try {				
-				FileInputStream fs = new FileInputStream(file);
-				for(int i = 0; i < dataSize; i++) {
-						data[i] |= ((long)(fs.read())) << 40;
-						data[i] |= ((long)(fs.read())) << 48;
-					}
-				fs.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}			
-		} else {
-			TerrainPrimer.makeFromVanilla(data);
-			writeTerrainData(data, x, z);
-		}
-	}
+        private void readTerrainData(long[] data, int x, int z) {
+                File file = getSaveTerrain(x, z);
+                boolean loadedTerrain = false;
+                if(file != null && file.exists()) {
+                        try(FileInputStream fs = new FileInputStream(file)) {
+                                for(int i = 0; i < dataSize; i++) {
+                                                data[i] |= readTerrainByte(fs) << 40;
+                                                data[i] |= readTerrainByte(fs) << 48;
+                                        }
+                                loadedTerrain = true;
+                        } catch (EOFException e) {
+                                System.err.println("Terrain data truncated for region (" + x
+                                                + ", " + z + "); regenerating terrain cache.");
+                        } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                        } catch (IOException e) {
+                                e.printStackTrace();
+                        }
+                }
+                if(!loadedTerrain) {
+                        for(int i = 0; i < dataSize; i++) {
+                                data[i] &= 0xffffffffffL;
+                        }
+                        TerrainPrimer.makeFromVanilla(data);
+                        writeTerrainData(data, x, z);
+                }
+        }
 	
 	
         private void convertMap(NewRegionMap map, File file) {
@@ -226,6 +233,15 @@ public class NewMapRegistry extends AbstractMapRegistry implements IMapRegistry 
                 int value = fs.read();
                 if(value == -1) {
                         throw new EOFException("Unexpected end of stream while reading map data");
+                }
+                return ((long)value) & 0xffL;
+        }
+
+
+        private static long readTerrainByte(FileInputStream fs) throws IOException {
+                int value = fs.read();
+                if(value == -1) {
+                        throw new EOFException("Unexpected end of stream while reading terrain data");
                 }
                 return ((long)value) & 0xffL;
         }
