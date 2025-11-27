@@ -90,11 +90,11 @@ public class RegionMap extends AbstractCachable implements IRegionMap  {
      * @param biome
      * @param x relative chunk x within region
      * @param z relative chunk x within region
-     */
+    */
     @Override
-	public void setBiomeExpress(long biome, int i) {
-        data[i]  = (short)(biome & 0xffL);
-        data[i] |= ((biome >> 32) & 0xffL); 
+        public void setBiomeExpress(long biome, int i) {
+        data[i]  = (int)(biome & 0xffL);
+        data[i] |= ((biome >> 8) & 0xffL) << 8;
     }
     
     
